@@ -1,0 +1,1394 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Akademik Makale Kütüphanesi & Tez Asistanı</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Inter Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome İkonları -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        pastelBlue: '#E3F2FD',
+                        pastelPurple: '#EDE7F6',
+                        pastelMint: '#E8F5E9',
+                        pastelPeach: '#FFF3E0',
+                        textPrimary: '#2C3E50',
+                        textSecondary: '#6C7A89'
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-[#EEF1F6] text-textPrimary font-sans antialiased min-h-screen py-6 sm:py-10 px-3 sm:px-6 flex items-center justify-center selection:bg-blue-100">
+
+    <!-- UYGULAMA ÇERÇEVESİ -->
+    <div class="max-w-6xl w-full bg-white rounded-3xl border border-gray-200/90 shadow-xl overflow-hidden flex flex-col min-h-[85vh] my-auto relative">
+
+        <!-- ÜST BAŞLIK / NAV & SEKMELER -->
+        <header class="bg-white/90 backdrop-blur-md border-b border-gray-100 px-6 sm:px-8 py-4 flex flex-col md:flex-row md:items-center justify-between gap-4 sticky top-0 z-30">
+            <div class="flex items-center space-x-3.5">
+             <div class="w-10 h-10 rounded-2xl bg-[#FFF3E0] flex items-center justify-center shadow-xs border border-amber-200/50 overflow-hidden p-1.5 shrink-0">
+    <img src="logo.png" alt="Logo" class="w-full h-full object-contain block">
+</div>
+                <div>
+                    <h1 class="font-bold text-base sm:text-lg text-gray-800 tracking-tight">Akademiks</h1>
+                    <p class="text-[11px] text-textSecondary font-medium">Makale Arşivi, Literatür Matrisi & Atıf Üretici</p>
+                </div>
+            </div>
+
+            <!-- MOD SEKMELERİ -->
+            <div class="flex items-center gap-1.5 bg-gray-100/80 p-1 rounded-2xl border border-gray-200/60 flex-wrap self-start md:self-auto">
+                <button type="button" id="tabLibraryBtn" onclick="switchMainTab('library')" class="px-3 py-1.5 rounded-xl text-xs font-semibold transition flex items-center gap-1.5 bg-white text-gray-800 shadow-xs">
+                    <i class="fa-solid fa-layer-group text-blue-600"></i>
+                    <span>Kütüphanem</span>
+                </button>
+                <button type="button" id="tabMatrixBtn" onclick="switchMainTab('matrix')" class="px-3 py-1.5 rounded-xl text-xs font-semibold text-gray-500 hover:text-gray-800 transition flex items-center gap-1.5">
+                    <i class="fa-solid fa-table-cells text-indigo-600"></i>
+                    <span>Kaynakça Tablosu</span>
+                </button>
+                <button type="button" id="tabDashboardBtn" onclick="switchMainTab('dashboard')" class="px-3 py-1.5 rounded-xl text-xs font-semibold text-gray-500 hover:text-gray-800 transition flex items-center gap-1.5">
+                    <i class="fa-solid fa-chart-pie text-emerald-600"></i>
+                    <span>Dashboard</span>
+                </button>
+                <button type="button" id="tabApaBtn" onclick="switchMainTab('apa')" class="px-3 py-1.5 rounded-xl text-xs font-semibold text-gray-500 hover:text-gray-800 transition flex items-center gap-1.5">
+                    <i class="fa-solid fa-quote-left text-purple-600"></i>
+                    <span>Atıf Üretici</span>
+                </button>
+            </div>
+
+            <div class="hidden sm:flex items-center space-x-2">
+                <button type="button" id="btnOpenModal" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl text-xs font-medium transition shadow-xs hover:shadow flex items-center gap-2 active:scale-95 cursor-pointer">
+                    <i class="fa-solid fa-plus"></i>
+                    <span>Yeni Makale Ekle</span>
+                </button>
+            </div>
+        </header>
+
+        <!-- ANA İÇERİK SEKMELERİ -->
+        <main class="flex-grow p-6 sm:p-8 flex flex-col justify-between pb-20">
+
+            <!-- 1. SEKME: KÜTÜPHANEM -->
+            <div id="sectionLibrary">
+                <div class="flex flex-col md:flex-row gap-4 mb-6 justify-between items-stretch md:items-center">
+                    <div class="relative flex-grow max-w-md">
+                        <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-xs"></i>
+                        <input type="text" id="searchInput" oninput="renderArticles()" placeholder="Başlık, yöntem, etiket veya notlarda ara..." 
+                               class="w-full pl-9 pr-4 py-2 bg-gray-50 border border-gray-200 rounded-xl text-xs focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition shadow-xs">
+                    </div>
+
+                    <div class="flex items-center justify-between md:justify-end gap-3">
+                        <div class="bg-gray-100 p-1 rounded-xl flex items-center border border-gray-200/60">
+                            <button type="button" id="viewCardBtn" onclick="setViewMode('card')" class="px-3 py-1 rounded-lg text-xs font-medium transition flex items-center gap-1.5 bg-white text-gray-800 shadow-xs">
+                                <i class="fa-solid fa-grip-vertical text-[11px]"></i>
+                                <span class="hidden sm:inline">Kart</span>
+                            </button>
+                            <button type="button" id="viewListBtn" onclick="setViewMode('list')" class="px-3 py-1 rounded-lg text-xs font-medium text-gray-500 hover:text-gray-800 transition flex items-center gap-1.5">
+                                <i class="fa-solid fa-list-ul text-[11px]"></i>
+                                <span class="hidden sm:inline">Liste</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-2 overflow-x-auto pb-2 mb-6 scrollbar-none" id="categoryTabs"></div>
+
+                <div class="flex justify-between items-center mb-4 text-[11px] text-textSecondary px-1">
+                    <span id="articleCount">0 makale listeleniyor</span>
+                    <span id="currentCategoryLabel" class="font-medium text-gray-700">Tüm Kategoriler</span>
+                </div>
+
+                <div id="articlesContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+
+                <div id="emptyState" class="hidden text-center py-12 bg-gray-50/50 rounded-2xl border border-dashed border-gray-200 mt-2">
+                    <div class="w-12 h-12 bg-pastelBlue text-blue-500 rounded-2xl flex items-center justify-center mx-auto mb-2 text-lg">
+                        <i class="fa-regular fa-folder-open"></i>
+                    </div>
+                    <h3 class="text-gray-700 font-semibold text-xs mb-1">Henüz makale bulunmuyor</h3>
+                    <p class="text-[11px] text-textSecondary max-w-xs mx-auto mb-3">Seçilen kategori veya arama kriterine uygun kayıt yok.</p>
+                    <button type="button" onclick="openModal()" class="text-xs bg-blue-50 text-blue-600 hover:bg-blue-100 font-medium px-3.5 py-1.5 rounded-lg transition">
+                        İlk Makaleyi Ekle
+                    </button>
+                </div>
+            </div>
+
+            <!-- 2. SEKME: TEZ LİTERATÜR ÖZET TABLOSU (SADECE K KULLANILANLAR) -->
+            <div id="sectionMatrix" class="hidden space-y-4">
+                <div class="bg-indigo-50/60 border border-indigo-100 rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                    <div>
+                        <h2 class="text-xs font-bold text-indigo-900 flex items-center gap-2">
+                            <i class="fa-solid fa-table-list text-indigo-600"></i>
+                            Tez Literatür Özet Matrisi
+                        </h2>
+                        <p class="text-[11px] text-indigo-700">Sadece <b>"Kaynakçada Kullanıldı (K)"</b> olarak işaretlenmiş makaleler listelenmektedir.</p>
+                    </div>
+                    <button type="button" onclick="copyMatrixTable()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-3.5 py-1.5 rounded-xl text-xs font-medium transition shadow-xs flex items-center gap-1.5 shrink-0 self-start sm:self-auto">
+                        <i class="fa-regular fa-copy"></i>
+                        <span id="copyMatrixBtnText">Tabloyu Kopyala (Word Uyumlu)</span>
+                    </button>
+                </div>
+
+                <div class="overflow-x-auto bg-white border border-gray-200 rounded-2xl shadow-2xs">
+                    <table id="literatureMatrixTable" class="w-full text-left border-collapse text-xs">
+                        <thead>
+                            <tr class="bg-gray-50 border-b border-gray-200 text-gray-700">
+                                <th class="p-3 font-semibold">Yazar & Yıl</th>
+                                <th class="p-3 font-semibold">Makale / Çalışma Adı</th>
+                                <th class="p-3 font-semibold">Kullanılan Yöntem</th>
+                                <th class="p-3 font-semibold">Kriterler / Değişkenler</th>
+                                <th class="p-3 font-semibold">Temel Bulgular & Notlar</th>
+                            </tr>
+                        </thead>
+                        <tbody id="matrixTableBody" class="divide-y divide-gray-100">
+                            <!-- Dinamik doldurulacak -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- 3. SEKME: DASHBOARD -->
+            <div id="sectionDashboard" class="hidden space-y-6">
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                    <div class="bg-pastelBlue/40 border border-blue-100 p-4 rounded-2xl flex items-center gap-3.5">
+                        <div class="w-10 h-10 rounded-xl bg-blue-500 text-white flex items-center justify-center shrink-0 text-sm">
+                            <i class="fa-solid fa-book"></i>
+                        </div>
+                        <div>
+                            <div class="text-xs font-medium text-gray-500">Toplam Makale</div>
+                            <div id="dashTotal" class="text-lg font-bold text-gray-800">0</div>
+                        </div>
+                    </div>
+
+                    <div class="bg-amber-50/60 border border-amber-100 p-4 rounded-2xl flex items-center gap-3.5">
+                        <div class="w-10 h-10 rounded-xl bg-amber-500 text-white flex items-center justify-center shrink-0 text-sm">
+                            <i class="fa-solid fa-clock"></i>
+                        </div>
+                        <div>
+                            <div class="text-xs font-medium text-gray-500">Okunacak</div>
+                            <div id="dashUnread" class="text-lg font-bold text-gray-800">0</div>
+                        </div>
+                    </div>
+
+                    <div class="bg-emerald-50/60 border border-emerald-100 p-4 rounded-2xl flex items-center gap-3.5">
+                        <div class="w-10 h-10 rounded-xl bg-emerald-500 text-white flex items-center justify-center shrink-0 text-sm">
+                            <i class="fa-solid fa-circle-check"></i>
+                        </div>
+                        <div>
+                            <div class="text-xs font-medium text-gray-500">Tamamlandı</div>
+                            <div id="dashCompleted" class="text-lg font-bold text-gray-800">0</div>
+                        </div>
+                    </div>
+
+                    <div class="bg-red-50/60 border border-red-100 p-4 rounded-2xl flex items-center gap-3.5">
+                        <div class="w-10 h-10 rounded-xl bg-red-600 text-white flex items-center justify-center shrink-0 text-sm font-bold">
+                            K
+                        </div>
+                        <div>
+                            <div class="text-xs font-medium text-gray-500">Kaynakçada (K)</div>
+                            <div id="dashBibliography" class="text-lg font-bold text-gray-800">0</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="bg-gray-50/60 p-5 rounded-2xl border border-gray-200/70">
+                        <h3 class="text-xs font-bold text-gray-800 mb-3 flex items-center gap-2">
+                            <i class="fa-solid fa-chart-bar text-blue-600"></i>
+                            Kategoriye Göre Dağılım
+                        </h3>
+                        <div id="categoryBars" class="space-y-3 pt-1"></div>
+                    </div>
+
+                    <div class="bg-gray-50/60 p-5 rounded-2xl border border-gray-200/70 flex flex-col justify-between">
+                        <div>
+                            <h3 class="text-xs font-bold text-gray-800 mb-3 flex items-center gap-2">
+                                <i class="fa-solid fa-bars-progress text-emerald-600"></i>
+                                Genel Literatür İlerleme Oranı
+                            </h3>
+                            <p class="text-[11px] text-textSecondary mb-4">Okunan, tezde veya kaynakçada kullanılan makalelerin oranıdır.</p>
+                            
+                            <div class="relative pt-1">
+                                <div class="flex mb-2 items-center justify-between">
+                                    <span class="text-[10px] font-semibold inline-block py-1 px-2 uppercase rounded-full text-emerald-600 bg-emerald-100">
+                                        Tamamlanma Oranı
+                                    </span>
+                                    <div class="text-right">
+                                        <span id="progressPercent" class="text-xs font-bold inline-block text-emerald-600">0%</span>
+                                    </div>
+                                </div>
+                                <div class="overflow-hidden h-2.5 mb-4 text-xs flex rounded-full bg-gray-200">
+                                    <div id="progressBar" style="width: 0%" class="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-emerald-500 transition-all duration-500"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="pt-3 border-t border-gray-200/60">
+                            <h4 class="text-[11px] font-semibold text-gray-700 mb-2">Popüler Etiketler & Yöntemler</h4>
+                            <div id="topTagsContainer" class="flex flex-wrap gap-1.5"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 4. SEKME: ATIF ÜRETİCİ (APA 7, IEEE, HARVARD) -->
+            <div id="sectionApa" class="hidden max-w-4xl mx-auto w-full">
+                <div class="bg-pastelPurple/30 rounded-2xl p-5 border border-purple-100/80 mb-6 flex items-center justify-between flex-wrap gap-3">
+                    <div>
+                        <h2 class="text-sm font-semibold text-purple-900 mb-1 flex items-center gap-2">
+                            <i class="fa-solid fa-graduation-cap text-purple-600"></i>
+                            Çoklu Format Otomatik Atıf Üretici
+                        </h2>
+                        <p class="text-xs text-purple-700">İstediğiniz atıf stilini seçin. Sistem yazarları uygun standarta dönüştürür.</p>
+                    </div>
+                    
+                    <div class="flex items-center gap-2 bg-white px-3 py-1.5 rounded-xl border border-purple-200 shadow-2xs">
+                        <label class="text-xs font-semibold text-purple-900">Format:</label>
+                        <select id="citationStyleSelect" onchange="generateApaCitation()" class="text-xs font-bold text-purple-700 bg-transparent border-none focus:outline-none cursor-pointer">
+                            <option value="APA7">APA 7</option>
+                            <option value="IEEE">IEEE</option>
+                            <option value="Harvard">Harvard</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-12 gap-6">
+                    <form id="apaForm" oninput="generateApaCitation()" class="md:col-span-7 bg-gray-50/60 p-5 rounded-2xl border border-gray-200/70 space-y-3.5">
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                            <div class="sm:col-span-2">
+                                <label class="block text-[11px] font-medium text-gray-700 mb-1">Yazar(lar) *</label>
+                                <input type="text" id="apaAuthor" placeholder="Örn: Özcan Kaplan" required
+                                       class="w-full px-3 py-1.5 bg-white border border-gray-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 transition">
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-medium text-gray-700 mb-1">Yayın Yılı *</label>
+                                <input type="number" id="apaYear" placeholder="2026" required value="2026"
+                                       class="w-full px-3 py-1.5 bg-white border border-gray-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 transition">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-[11px] font-medium text-gray-700 mb-1">Makale Başlığı *</label>
+                            <input type="text" id="apaArticleTitle" placeholder="Makalenin tam adı..." required
+                                   class="w-full px-3 py-1.5 bg-white border border-gray-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 transition">
+                        </div>
+
+                        <div>
+                            <label class="block text-[11px] font-medium text-gray-700 mb-1">Dergi Adı *</label>
+                            <input type="text" id="apaJournal" placeholder="Örn: Denizcilik Araştırmaları Dergisi" required
+                                   class="w-full px-3 py-1.5 bg-white border border-gray-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 transition">
+                        </div>
+
+                        <div class="grid grid-cols-3 gap-2">
+                            <div>
+                                <label class="block text-[11px] font-medium text-gray-700 mb-1">Cilt (Volume)</label>
+                                <input type="text" id="apaVolume" placeholder="Örn: 12"
+                                       class="w-full px-3 py-1.5 bg-white border border-gray-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 transition">
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-medium text-gray-700 mb-1">Sayı (Issue)</label>
+                                <input type="text" id="apaIssue" placeholder="Örn: 2"
+                                       class="w-full px-3 py-1.5 bg-white border border-gray-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 transition">
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-medium text-gray-700 mb-1">Sayfa Aralığı</label>
+                                <input type="text" id="apaPages" placeholder="105-120"
+                                       class="w-full px-3 py-1.5 bg-white border border-gray-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 transition">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-[11px] font-medium text-gray-700 mb-1">DOI veya Bağlantı URL'si</label>
+                            <input type="text" id="apaDoi" placeholder="https://doi.org/10.1016/j.ress..."
+                                   class="w-full px-3 py-1.5 bg-white border border-gray-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 transition">
+                        </div>
+                    </form>
+
+                    <div class="md:col-span-5 flex flex-col justify-between space-y-4">
+                        <div class="bg-white p-5 rounded-2xl border border-gray-200 shadow-xs flex-grow flex flex-col justify-between">
+                            <div>
+                                <div class="flex items-center justify-between mb-3 pb-2 border-b border-gray-100">
+                                    <span class="text-xs font-semibold text-gray-700" id="citationPreviewLabel">APA 7 Önizleme</span>
+                                    <span class="text-[10px] bg-purple-50 text-purple-600 font-medium px-2 py-0.5 rounded-md">Canlı Üretim</span>
+                                </div>
+                                <div id="apaOutput" class="text-xs text-gray-800 leading-relaxed font-sans min-h-[90px] p-3 bg-gray-50 rounded-xl border border-gray-100">
+                                    Lütfen formu doldurunuz...
+                                </div>
+
+                                <div class="mt-4 pt-3 border-t border-gray-100">
+                                    <span class="text-[11px] font-medium text-gray-500 block mb-1">Metin İçi Atıf (In-text Citation):</span>
+                                    <div id="apaInTextOutput" class="text-xs font-mono bg-purple-50/50 p-2 rounded-lg text-purple-900 border border-purple-100">
+                                        -
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="space-y-2 mt-4 pt-3 border-t border-gray-100">
+                                <button type="button" onclick="copyApaCitation()" class="w-full bg-purple-600 hover:bg-purple-700 text-white py-2 rounded-xl text-xs font-medium transition shadow-xs flex items-center justify-center gap-2">
+                                    <i class="fa-regular fa-copy"></i>
+                                    <span id="copyBtnText">Atıf Metnini Kopyala</span>
+                                </button>
+                                <button type="button" onclick="saveApaToLibrary()" class="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 py-2 rounded-xl text-xs font-medium transition flex items-center justify-center gap-2">
+                                    <i class="fa-solid fa-bookmark text-blue-600"></i>
+                                    <span>Kütüphaneme Kaydet</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <footer class="mt-8 pt-4 border-t border-gray-100 flex items-center justify-between text-[11px] text-gray-400">
+                <span>Created by Özcan KAPLAN</span>
+                <span></span>
+            </footer>
+
+        </main>
+
+        <!-- ÇERÇEVE İÇİ SAĞ ALT EYLEM BUTONLARI -->
+        <div class="absolute bottom-5 right-6 z-20 flex items-center gap-2">
+            <input type="file" id="importCsvFile" accept=".csv" onchange="importCsvData(event)" class="hidden">
+            <button type="button" onclick="document.getElementById('importCsvFile').click()" title="Excel/CSV Dosyasından Kütüphaneye Yükle" class="bg-blue-600 hover:bg-blue-700 text-white px-3.5 py-2 rounded-xl text-xs font-semibold transition-all shadow-md hover:shadow-lg flex items-center gap-1.5 border border-blue-500/30 active:scale-95 cursor-pointer">
+                <i class="fa-solid fa-file-import text-sm"></i>
+                <span>Excel / CSV Yükle</span>
+            </button>
+
+            <button type="button" onclick="exportData()" title="Excel Olarak İndir" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3.5 py-2 rounded-xl text-xs font-semibold transition-all shadow-md hover:shadow-lg flex items-center gap-1.5 border border-emerald-500/30 active:scale-95 cursor-pointer">
+                <i class="fa-solid fa-file-excel text-sm"></i>
+                <span>Excel Olarak İndir</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- EKLEME / DÜZENLEME MODALI -->
+    <div id="articleModal" class="fixed inset-0 bg-black/40 backdrop-blur-xs z-50 flex items-center justify-center hidden p-4">
+        <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-gray-100 transition-all transform scale-100 max-h-[90vh] overflow-y-auto" id="modalCard">
+            
+            <div class="flex justify-between items-center mb-4 pb-3 border-b border-gray-100">
+                <h2 id="modalTitle" class="text-sm font-semibold text-gray-800">Yeni Makale Kaydet</h2>
+                <button type="button" id="btnCloseModal" class="text-gray-400 hover:text-gray-600 p-1 rounded-lg hover:bg-gray-100 transition">
+                    <i class="fa-solid fa-xmark text-sm"></i>
+                </button>
+            </div>
+
+            <form id="articleForm" class="space-y-3">
+                <input type="hidden" id="editId">
+
+                <!-- PDF Yükleme -->
+                <div class="bg-red-50/50 p-3 rounded-xl border border-red-100">
+                    <label class="block text-xs font-semibold text-gray-800 mb-1 flex items-center gap-1.5">
+                        <i class="fa-solid fa-file-pdf text-red-500"></i>
+                        <span>PDF Dosyası Yükle</span>
+                    </label>
+                    <input type="file" id="articlePdfFile" accept="application/pdf" onchange="handlePdfFileUpload(event)" class="hidden">
+                    <div class="flex items-center gap-2">
+                        <button type="button" onclick="document.getElementById('articlePdfFile').click()" class="px-3 py-1 bg-white border border-gray-200 hover:bg-gray-50 text-gray-700 rounded-xl text-xs font-medium transition flex items-center gap-1.5 shadow-2xs">
+                            <i class="fa-solid fa-upload text-xs text-gray-500"></i>
+                            <span>Bilgisayardan PDF Seç</span>
+                        </button>
+                        <span id="pdfFileName" class="text-[11px] text-emerald-600 font-medium truncate hidden"></span>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-medium text-gray-700 mb-1">Makale Başlığı *</label>
+                    <input type="text" id="articleTitle" required placeholder="Makalenin adını girin..." 
+                           class="w-full px-3 py-1.5 bg-gray-50 border border-gray-200 rounded-xl text-xs focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition">
+                </div>
+
+                <div class="grid grid-cols-3 gap-2">
+                    <div class="col-span-2">
+                        <label class="block text-xs font-medium text-gray-700 mb-1">Yazar(lar) (Soyad, İ.)</label>
+                        <input type="text" id="articleAuthor" placeholder="Örn: Kaplan, Ö." 
+                               class="w-full px-3 py-1.5 bg-gray-50 border border-gray-200 rounded-xl text-xs focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-gray-700 mb-1">Yıl</label>
+                        <input type="number" id="articleYear" placeholder="2026" value="2026"
+                               class="w-full px-3 py-1.5 bg-gray-50 border border-gray-200 rounded-xl text-xs focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-2 bg-indigo-50/40 p-2.5 rounded-xl border border-indigo-100/60">
+                    <div>
+                        <label class="block text-[11px] font-semibold text-indigo-900 mb-1">Kullanılan Yöntem</label>
+                        <input type="text" id="articleMethod" placeholder="Örn: Fuzzy AHP, TOPSIS" 
+                               class="w-full px-2.5 py-1.5 bg-white border border-gray-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500/20 transition">
+                    </div>
+                    <div>
+                        <label class="block text-[11px] font-semibold text-indigo-900 mb-1">Kriterler / Değişkenler</label>
+                        <input type="text" id="articleCriteria" placeholder="Örn: Risk, Maliyet, Güvenlik" 
+                               class="w-full px-2.5 py-1.5 bg-white border border-gray-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500/20 transition">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-2">
+                    <div>
+                        <label class="block text-xs font-medium text-gray-700 mb-1">Kategori *</label>
+                        <select id="articleCategorySelect" onchange="toggleNewCategoryInput()" class="w-full px-3 py-1.5 bg-gray-50 border border-gray-200 rounded-xl text-xs focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition">
+                        </select>
+                        <input type="text" id="newCategoryInput" placeholder="Yeni Kategori" class="hidden mt-1 w-full px-3 py-1.5 bg-gray-50 border border-gray-200 rounded-xl text-xs">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-gray-700 mb-1">Çalışma Durumu</label>
+                        <select id="articleStatus" class="w-full px-3 py-1.5 bg-gray-50 border border-gray-200 rounded-xl text-xs focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition">
+                            <option value="unread">🟡 Okunacak</option>
+                            <option value="reading">🔵 Okunuyor</option>
+                            <option value="completed">🟢 Tamamlandı</option>
+                            <option value="cited">🟣 Tezde Kullanıldı</option>
+                            <option value="bibliography">🔴 Kaynakçada Kullanıldı (K)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-medium text-gray-700 mb-1">Makale Bağlantısı / DOI URL</label>
+                    <input type="url" id="articleUrl" placeholder="https://doi.org/..." 
+                           class="w-full px-3 py-1.5 bg-gray-50 border border-gray-200 rounded-xl text-xs focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-medium text-gray-700 mb-1">Etiketler (Virgülle ayırın)</label>
+                    <input type="text" id="articleTags" placeholder="Örn: Risk, AHP, ÇKKV" 
+                           class="w-full px-3 py-1.5 bg-gray-50 border border-gray-200 rounded-xl text-xs focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-medium text-gray-700 mb-1">Temel Bulgular & Notlar</label>
+                    <textarea id="articleNotes" rows="2" placeholder="Makalenin ana sonucu, tez için önemli detaylar..." 
+                              class="w-full px-3 py-1.5 bg-gray-50 border border-gray-200 rounded-xl text-xs focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition resize-none"></textarea>
+                </div>
+
+                <div class="flex justify-end space-x-2 pt-2 border-t border-gray-100">
+                    <button type="button" id="btnCancelModal" class="px-4 py-1.5 text-xs font-medium text-gray-600 hover:bg-gray-100 rounded-xl transition">İptal</button>
+                    <button type="submit" class="px-5 py-1.5 text-xs font-medium bg-blue-600 hover:bg-blue-700 text-white rounded-xl transition shadow-xs">Kaydet</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT MANTIĞI & INDEXEDDB -->
+    <script>
+        const DEFAULT_CATEGORIES = ['Risk Analizi', 'ÇKKV / MCDM', 'Denizcilik', 'Yapay Zeka', 'Genel'];
+
+        let articles = [];
+        let customCategories = JSON.parse(localStorage.getItem('academic_categories') || '[]');
+        let activeCategory = 'all';
+        let currentViewMode = localStorage.getItem('view_mode') || 'card';
+        let tempPdfData = '';
+        let tempPdfName = '';
+
+        const DB_NAME = 'AcademicArticleVault';
+        const DB_VERSION = 1;
+        const STORE_NAME = 'articles';
+        let db = null;
+
+        function initDB() {
+            return new Promise((resolve, reject) => {
+                const request = indexedDB.open(DB_NAME, DB_VERSION);
+                request.onupgradeneeded = (e) => {
+                    const db = e.target.result;
+                    if (!db.objectStoreNames.contains(STORE_NAME)) {
+                        db.createObjectStore(STORE_NAME, { keyPath: 'id' });
+                    }
+                };
+                request.onsuccess = (e) => {
+                    db = e.target.result;
+                    resolve(db);
+                };
+                request.onerror = (e) => reject(e);
+            });
+        }
+
+        async function loadArticlesFromDB() {
+            return new Promise((resolve, reject) => {
+                const transaction = db.transaction([STORE_NAME], 'readonly');
+                const store = transaction.objectStore(STORE_NAME);
+                const request = store.getAll();
+                request.onsuccess = () => resolve(request.result || []);
+                request.onerror = () => reject(request.error);
+            });
+        }
+
+        async function saveArticleToDB(article) {
+            return new Promise((resolve, reject) => {
+                const transaction = db.transaction([STORE_NAME], 'readwrite');
+                const store = transaction.objectStore(STORE_NAME);
+                const request = store.put(article);
+                request.onsuccess = () => resolve();
+                request.onerror = () => reject(request.error);
+            });
+        }
+
+        async function deleteArticleFromDB(id) {
+            return new Promise((resolve, reject) => {
+                const transaction = db.transaction([STORE_NAME], 'readwrite');
+                const store = transaction.objectStore(STORE_NAME);
+                const request = store.delete(id);
+                request.onsuccess = () => resolve();
+                request.onerror = () => reject(request.error);
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            try {
+                await initDB();
+                articles = await loadArticlesFromDB();
+
+                if (articles.length === 0) {
+                    const sample = {
+                        id: '1',
+                        url: 'https://doi.org/10.1016/j.ress.2023.109123',
+                        title: 'Analysis & Management of Bulk Grain Cargo Transportation Risks on Ships',
+                        author: 'Kaplan, Ö.',
+                        year: '2026',
+                        method: 'Fuzzy AHP',
+                        criteria: 'Safety, Cost, Human Error',
+                        category: 'Risk Analizi',
+                        status: 'bibliography',
+                        tags: ['Grain Cargo', 'Fuzzy AHP', 'Safety'],
+                        notes: 'Tahıl taşımacılığı riskleri üzerine ÇKKV yöntemiyle hazırlanmış temel yayın.',
+                        pdfData: '',
+                        pdfName: '',
+                        date: new Date().toISOString()
+                    };
+                    await saveArticleToDB(sample);
+                    articles = [sample];
+                }
+            } catch (err) {
+                console.error("IndexedDB başlatılamadı:", err);
+            }
+
+            document.getElementById('btnOpenModal').addEventListener('click', () => openModal(false));
+            document.getElementById('btnCloseModal').addEventListener('click', closeModal);
+            document.getElementById('btnCancelModal').addEventListener('click', closeModal);
+            document.getElementById('articleForm').addEventListener('submit', handleFormSubmit);
+
+            setViewMode(currentViewMode, false);
+            renderCategories();
+            renderArticles();
+            renderDashboard();
+            renderMatrixTable();
+            generateApaCitation();
+        });
+
+        function handlePdfFileUpload(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    tempPdfData = e.target.result;
+                    tempPdfName = file.name;
+                    const fileNameSpan = document.getElementById('pdfFileName');
+                    fileNameSpan.innerText = `✓ Yüklendi: ${file.name}`;
+                    fileNameSpan.classList.remove('hidden');
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function openPdf(id) {
+            const item = articles.find(a => a.id === id);
+            if (!item || !item.pdfData) return;
+
+            const win = window.open();
+            if (win) {
+                win.document.write(`
+                    <html>
+                        <head><title>${escapeHtml(item.pdfName || 'Makale PDF')}</title></head>
+                        <body style="margin:0; background:#333; display:flex; flex-direction:column; height:100vh;">
+                            <iframe src="${item.pdfData}" style="border:none; width:100%; height:100%;"></iframe>
+                        </body>
+                    </html>
+                `);
+            }
+        }
+
+        function switchMainTab(tab) {
+            const libSec = document.getElementById('sectionLibrary');
+            const matrixSec = document.getElementById('sectionMatrix');
+            const dashSec = document.getElementById('sectionDashboard');
+            const apaSec = document.getElementById('sectionApa');
+            
+            const libBtn = document.getElementById('tabLibraryBtn');
+            const matrixBtn = document.getElementById('tabMatrixBtn');
+            const dashBtn = document.getElementById('tabDashboardBtn');
+            const apaBtn = document.getElementById('tabApaBtn');
+
+            libSec.classList.add('hidden');
+            matrixSec.classList.add('hidden');
+            dashSec.classList.add('hidden');
+            apaSec.classList.add('hidden');
+
+            const inactiveClass = "px-3 py-1.5 rounded-xl text-xs font-semibold text-gray-500 hover:text-gray-800 transition flex items-center gap-1.5";
+            libBtn.className = inactiveClass;
+            matrixBtn.className = inactiveClass;
+            dashBtn.className = inactiveClass;
+            apaBtn.className = inactiveClass;
+
+            const activeClass = "px-3 py-1.5 rounded-xl text-xs font-semibold transition flex items-center gap-1.5 bg-white text-gray-800 shadow-xs";
+
+            if (tab === 'library') {
+                libSec.classList.remove('hidden');
+                libBtn.className = activeClass;
+            } else if (tab === 'matrix') {
+                matrixSec.classList.remove('hidden');
+                matrixBtn.className = activeClass;
+                renderMatrixTable();
+            } else if (tab === 'dashboard') {
+                dashSec.classList.remove('hidden');
+                dashBtn.className = activeClass;
+                renderDashboard();
+            } else {
+                apaSec.classList.remove('hidden');
+                apaBtn.className = activeClass;
+            }
+        }
+
+        // TEZ LİTERATÜR MATRİSİNİ OLUŞTURMA (Sadece 'bibliography' yani K olanlar)
+        function renderMatrixTable() {
+            const tbody = document.getElementById('matrixTableBody');
+            
+            // SADECE K (bibliography) OLAN MAKALELERİ SÜZÜYORUZ
+            const filteredMatrixArticles = articles.filter(a => a.status === 'bibliography');
+
+            const sorted = [...filteredMatrixArticles].sort((a, b) => {
+                const dateA = new Date(a.date || parseInt(a.id) || 0).getTime();
+                const dateB = new Date(b.date || parseInt(b.id) || 0).getTime();
+                return dateB - dateA;
+            });
+
+            if (sorted.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="5" class="p-8 text-center text-gray-400">
+                            <i class="fa-solid fa-filter text-lg mb-2 block text-gray-300"></i>
+                            Henüz <b>"Kaynakçada Kullanıldı (K)"</b> olarak işaretlenmiş makale bulunmuyor.<br>
+                            <span class="text-[11px] text-gray-400">Makalelerinizin durumunu düzenle panelinden "Kaynakçada Kullanıldı (K)" yaparak buraya ekleyebilirsiniz.</span>
+                        </td>
+                    </tr>`;
+                return;
+            }
+
+            tbody.innerHTML = sorted.map(item => {
+                const authorYear = (item.author || 'Belirtilmedi') + (item.year ? ` (${item.year})` : '');
+                return `
+                    <tr class="hover:bg-gray-50/80 transition">
+                        <td class="p-3 font-semibold text-gray-800 whitespace-nowrap">
+                            ${escapeHtml(authorYear)} <span class="text-red-600 font-bold ml-1" title="Kaynakçada Kullanıldı">(K)</span>
+                        </td>
+                        <td class="p-3 text-gray-800">
+                            ${item.url ? `<a href="${item.url}" target="_blank" class="hover:underline text-blue-600 font-medium">${escapeHtml(item.title)}</a>` : escapeHtml(item.title)}
+                        </td>
+                        <td class="p-3 text-gray-700 font-medium">
+                            <span class="bg-indigo-50 text-indigo-700 px-2 py-0.5 rounded-md text-[11px] border border-indigo-100/60">${escapeHtml(item.method || '-')}</span>
+                        </td>
+                        <td class="p-3 text-gray-600">${escapeHtml(item.criteria || '-')}</td>
+                        <td class="p-3 text-gray-600 max-w-xs">${escapeHtml(item.notes || '-')}</td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function copyMatrixTable() {
+            const table = document.getElementById('literatureMatrixTable');
+            const range = document.createRange();
+            range.selectNode(table);
+            window.getSelection().removeAllRanges();
+            window.getSelection().addRange(range);
+
+            try {
+                document.execCommand('copy');
+                window.getSelection().removeAllRanges();
+                const btnText = document.getElementById('copyMatrixBtnText');
+                btnText.innerText = 'Kopyalandı! (Word’e Yapıştırabilirsiniz)';
+                setTimeout(() => { btnText.innerText = 'Tabloyu Kopyala (Word Uyumlu)'; }, 2500);
+            } catch (err) {
+                alert('Kopyalama başarısız oldu.');
+            }
+        }
+
+        function generateApaCitation() {
+            const style = document.getElementById('citationStyleSelect').value;
+            let authorRaw = document.getElementById('apaAuthor').value.trim();
+            let author = 'Yazar, A.';
+
+            if (authorRaw) {
+                if (!authorRaw.includes(',')) {
+                    let parts = authorRaw.split(' ').filter(Boolean);
+                    if (parts.length > 1) {
+                        let lastName = parts.pop();
+                        let initials = parts.map(p => p.charAt(0).toUpperCase() + '.').join(' ');
+                        author = `${lastName}, ${initials}`;
+                    } else {
+                        author = authorRaw;
+                    }
+                } else {
+                    author = authorRaw;
+                }
+            }
+
+            const year = document.getElementById('apaYear').value.trim() || '2026';
+            const title = document.getElementById('apaArticleTitle').value.trim() || 'Makale başlığı';
+            const journal = document.getElementById('apaJournal').value.trim() || 'Dergi Adı';
+            const volume = document.getElementById('apaVolume').value.trim();
+            const issue = document.getElementById('apaIssue').value.trim();
+            const pages = document.getElementById('apaPages').value.trim();
+            const doi = document.getElementById('apaDoi').value.trim();
+
+            let outputHtml = '';
+            let inText = '';
+
+            if (style === 'IEEE') {
+                document.getElementById('citationPreviewLabel').innerText = "IEEE Formatı Önizleme";
+                let firstInitial = author.split(',')[1] || 'A.';
+                let surname = author.split(',')[0] || 'Yazar';
+                let ieeeAuthor = `${firstInitial.trim()} ${surname.trim()}`;
+
+                outputHtml = `[1] ${escapeHtml(ieeeAuthor)}, "${escapeHtml(title)}," <i>${escapeHtml(journal)}</i>${volume ? ', vol. ' + escapeHtml(volume) : ''}${issue ? ', no. ' + escapeHtml(issue) : ''}${pages ? ', pp. ' + escapeHtml(pages) : ''}, ${escapeHtml(year)}.`;
+                inText = `[1]`;
+            } 
+            else if (style === 'Harvard') {
+                document.getElementById('citationPreviewLabel').innerText = "Harvard Formatı Önizleme";
+                outputHtml = `${escapeHtml(author)} (${escapeHtml(year)}) '${escapeHtml(title)}', <i>${escapeHtml(journal)}</i>${volume ? ', ' + escapeHtml(volume) : ''}${issue ? '(' + escapeHtml(issue) + ')' : ''}${pages ? ', pp. ' + escapeHtml(pages) : ''}.`;
+                const surname = author.split(',')[0] || 'Yazar';
+                inText = `(${surname}, ${year})`;
+            } 
+            else { // APA 7
+                document.getElementById('citationPreviewLabel').innerText = "APA 7 Formatı Önizleme";
+                let volIssuePages = '';
+                if (volume) volIssuePages += `<i>${escapeHtml(volume)}</i>`;
+                if (issue) volIssuePages += `(${escapeHtml(issue)})`;
+                if (pages) volIssuePages += `, ${escapeHtml(pages)}`;
+
+                let doiFormatted = doi ? (doi.startsWith('http') ? doi : `https://doi.org/${doi}`) : '';
+                outputHtml = `${escapeHtml(author)} (${escapeHtml(year)}). ${escapeHtml(title)}. <i>${escapeHtml(journal)}</i>${volIssuePages ? ', ' + volIssuePages : ''}.${doiFormatted ? ' ' + escapeHtml(doiFormatted) : ''}`;
+                
+                const firstAuthorSurname = author.split(',')[0] || 'Yazar';
+                inText = `(${firstAuthorSurname}, ${year})  veya  ${firstAuthorSurname} (${year})`;
+            }
+
+            document.getElementById('apaOutput').innerHTML = outputHtml;
+            document.getElementById('apaInTextOutput').innerText = inText;
+        }
+
+        function copyApaCitation() {
+            const outputDiv = document.getElementById('apaOutput');
+            navigator.clipboard.writeText(outputDiv.innerText).then(() => {
+                const btnText = document.getElementById('copyBtnText');
+                btnText.innerText = 'Kopyalandı!';
+                setTimeout(() => { btnText.innerText = 'Atıf Metnini Kopyala'; }, 2000);
+            });
+        }
+
+        async function saveApaToLibrary() {
+            const title = document.getElementById('apaArticleTitle').value.trim() || 'Atıf Kaydı';
+            const url = document.getElementById('apaDoi').value.trim() || '';
+            const apaText = document.getElementById('apaOutput').innerText;
+            const author = document.getElementById('apaAuthor').value.trim();
+            const year = document.getElementById('apaYear').value.trim();
+
+            const newArticle = {
+                id: Date.now().toString(),
+                url: url,
+                title: title,
+                author: author,
+                year: year,
+                category: 'Genel',
+                status: 'cited',
+                tags: ['Kaynakça'],
+                notes: `Künye: ${apaText}`,
+                pdfData: '',
+                pdfName: '',
+                date: new Date().toISOString()
+            };
+
+            await saveArticleToDB(newArticle);
+            articles = await loadArticlesFromDB();
+            renderCategories();
+            renderArticles();
+            renderMatrixTable();
+            switchMainTab('library');
+        }
+
+        function renderDashboard() {
+            const total = articles.length;
+            const unread = articles.filter(a => a.status === 'unread').length;
+            const completed = articles.filter(a => a.status === 'completed').length;
+            const cited = articles.filter(a => a.status === 'cited').length;
+            const bibliography = articles.filter(a => a.status === 'bibliography').length;
+
+            document.getElementById('dashTotal').textContent = total;
+            document.getElementById('dashUnread').textContent = unread;
+            document.getElementById('dashCompleted').textContent = completed;
+            document.getElementById('dashBibliography').textContent = bibliography;
+
+            const doneCount = completed + cited + bibliography;
+            const percent = total > 0 ? Math.round((doneCount / total) * 100) : 0;
+            document.getElementById('progressPercent').textContent = `${percent}%`;
+            document.getElementById('progressBar').style.width = `${percent}%`;
+
+            const catMap = {};
+            articles.forEach(a => { catMap[a.category] = (catMap[a.category] || 0) + 1; });
+
+            const categoryBarsDiv = document.getElementById('categoryBars');
+            if (total === 0) {
+                categoryBarsDiv.innerHTML = `<span class="text-xs text-gray-400">Veri bulunmuyor</span>`;
+            } else {
+                categoryBarsDiv.innerHTML = Object.keys(catMap).map(cat => {
+                    const count = catMap[cat];
+                    const catPercent = Math.round((count / total) * 100);
+                    return `
+                        <div>
+                            <div class="flex justify-between text-[11px] mb-1">
+                                <span class="font-medium text-gray-700">${escapeHtml(cat)}</span>
+                                <span class="text-gray-500 font-semibold">${count} (%${catPercent})</span>
+                            </div>
+                            <div class="overflow-hidden h-2 text-xs flex rounded-full bg-gray-200">
+                                <div style="width: ${catPercent}%" class="bg-blue-500 rounded-full"></div>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            }
+
+            const tagMap = {};
+            articles.forEach(a => {
+                if (a.tags) a.tags.forEach(t => { tagMap[t] = (tagMap[t] || 0) + 1; });
+                if (a.method) tagMap[a.method] = (tagMap[a.method] || 0) + 1;
+            });
+
+            const topTagsContainer = document.getElementById('topTagsContainer');
+            const tagKeys = Object.keys(tagMap).sort((a,b) => tagMap[b] - tagMap[a]);
+
+            if (tagKeys.length === 0) {
+                topTagsContainer.innerHTML = `<span class="text-xs text-gray-400">Etiket veya yöntem yok</span>`;
+            } else {
+                topTagsContainer.innerHTML = tagKeys.map(tag => `
+                    <span class="text-[10px] bg-purple-50 text-purple-700 font-medium px-2 py-0.5 rounded-lg border border-purple-100">
+                        #${escapeHtml(tag)} (${tagMap[tag]})
+                    </span>
+                `).join('');
+            }
+        }
+
+        function getAllCategories() {
+            return Array.from(new Set([...DEFAULT_CATEGORIES, ...customCategories, ...articles.map(a => a.category)])).filter(Boolean);
+        }
+
+        function setViewMode(mode, triggerRender = true) {
+            currentViewMode = mode;
+            localStorage.setItem('view_mode', mode);
+
+            const cardBtn = document.getElementById('viewCardBtn');
+            const listBtn = document.getElementById('viewListBtn');
+
+            if (mode === 'card') {
+                cardBtn.className = "px-3 py-1 rounded-lg text-xs font-medium transition flex items-center gap-1.5 bg-white text-gray-800 shadow-xs";
+                listBtn.className = "px-3 py-1 rounded-lg text-xs font-medium text-gray-500 hover:text-gray-800 transition flex items-center gap-1.5";
+            } else {
+                listBtn.className = "px-3 py-1 rounded-lg text-xs font-medium transition flex items-center gap-1.5 bg-white text-gray-800 shadow-xs";
+                cardBtn.className = "px-3 py-1 rounded-lg text-xs font-medium text-gray-500 hover:text-gray-800 transition flex items-center gap-1.5";
+            }
+
+            if (triggerRender) renderArticles();
+        }
+
+        function renderCategories() {
+            const tabsContainer = document.getElementById('categoryTabs');
+            const categories = ['all', ...getAllCategories()];
+
+            tabsContainer.innerHTML = categories.map(cat => {
+                const isActive = activeCategory === cat;
+                const isAll = cat === 'all';
+                const label = isAll ? 'Tümü' : cat;
+                const count = isAll ? articles.length : articles.filter(a => a.category === cat).length;
+                
+                return `
+                    <button type="button" onclick="selectCategory('${cat}')" 
+                            class="px-3 py-1.5 rounded-xl text-xs font-medium whitespace-nowrap transition-all flex items-center gap-2 ${
+                                isActive 
+                                ? 'bg-gray-900 text-white shadow-xs' 
+                                : 'bg-gray-50 text-textSecondary hover:text-gray-900 hover:bg-gray-100 border border-gray-200/60'
+                            }">
+                        <span>${label}</span>
+                        <span class="px-1.5 py-0.2 rounded-md text-[10px] ${isActive ? 'bg-gray-700 text-gray-200' : 'bg-gray-200/60 text-gray-600'}">
+                            ${count}
+                        </span>
+                    </button>
+                `;
+            }).join('');
+
+            const select = document.getElementById('articleCategorySelect');
+            select.innerHTML = getAllCategories().map(c => `<option value="${c}">${c}</option>`).join('') + 
+                               `<option value="__new__">+ Yeni Kategori Ekle...</option>`;
+        }
+
+        function selectCategory(cat) {
+            activeCategory = cat;
+            document.getElementById('currentCategoryLabel').textContent = cat === 'all' ? 'Tüm Kategoriler' : cat;
+            renderCategories();
+            renderArticles();
+        }
+
+        function renderArticles() {
+            const container = document.getElementById('articlesContainer');
+            const searchVal = document.getElementById('searchInput').value.toLowerCase().trim();
+
+            const sortedArticles = [...articles].sort((a, b) => {
+                const dateA = new Date(a.date || parseInt(a.id) || 0).getTime();
+                const dateB = new Date(b.date || parseInt(b.id) || 0).getTime();
+                return dateB - dateA;
+            });
+
+            const filtered = sortedArticles.filter(item => {
+                const matchesCat = activeCategory === 'all' || item.category === activeCategory;
+                const matchesSearch = item.title.toLowerCase().includes(searchVal) || 
+                                      (item.notes && item.notes.toLowerCase().includes(searchVal)) ||
+                                      (item.method && item.method.toLowerCase().includes(searchVal)) ||
+                                      (item.criteria && item.criteria.toLowerCase().includes(searchVal)) ||
+                                      (item.tags && item.tags.some(t => t.toLowerCase().includes(searchVal)));
+                return matchesCat && matchesSearch;
+            });
+
+            document.getElementById('articleCount').textContent = `${filtered.length} makale listeleniyor`;
+
+            if (filtered.length === 0) {
+                container.innerHTML = '';
+                document.getElementById('emptyState').classList.remove('hidden');
+                return;
+            } else {
+                document.getElementById('emptyState').classList.add('hidden');
+            }
+
+            if (currentViewMode === 'list') {
+                container.className = "flex flex-col space-y-2";
+                container.innerHTML = filtered.map(item => renderListItem(item)).join('');
+            } else {
+                container.className = "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4";
+                container.innerHTML = filtered.map(item => renderCardItem(item)).join('');
+            }
+        }
+
+        function getStatusBadge(statusKey) {
+            const config = {
+                unread: { label: 'Okunacak', class: 'bg-amber-50 text-amber-700 border-amber-200/60' },
+                reading: { label: 'Okunuyor', class: 'bg-blue-50 text-blue-700 border-blue-200/60' },
+                completed: { label: 'Tamamlandı', class: 'bg-emerald-50 text-emerald-700 border-emerald-200/60' },
+                cited: { label: 'Tezde Kullanıldı', class: 'bg-purple-50 text-purple-700 border-purple-200/60' },
+                bibliography: { label: 'Kaynakçada (K)', class: 'bg-red-50 text-red-700 border-red-200/60 font-bold' }
+            };
+            return config[statusKey] || config.unread;
+        }
+
+        function getStatusKeyByLabel(labelStr) {
+            if (!labelStr) return 'unread';
+            const clean = labelStr.trim().toLowerCase();
+            if (clean.includes('kaynakça') || clean.includes('(k)')) return 'bibliography';
+            if (clean.includes('okunacak')) return 'unread';
+            if (clean.includes('okunuyor')) return 'reading';
+            if (clean.includes('tamamlandı')) return 'completed';
+            if (clean.includes('tezde') || clean.includes('kullanıldı')) return 'cited';
+            return 'unread';
+        }
+
+        function renderCardItem(item) {
+            const domain = item.url ? getDomain(item.url) : 'Yerel Kayıt';
+            const status = getStatusBadge(item.status);
+            const isK = item.status === 'bibliography';
+
+            return `
+                <div class="bg-gray-50/60 hover:bg-white rounded-2xl p-4 border border-gray-200/70 hover:border-blue-200 shadow-2xs hover:shadow-md transition-all flex flex-col justify-between group relative">
+                    <div>
+                        <div class="flex items-center justify-between gap-2 mb-2">
+                            <div class="flex items-center gap-1.5 flex-wrap">
+                                <span class="px-2 py-0.5 rounded-lg text-[10px] font-medium bg-blue-50 text-blue-600 border border-blue-100/60">
+                                    ${escapeHtml(item.category)}
+                                </span>
+                                <span class="px-2 py-0.5 rounded-lg text-[10px] font-medium border ${status.class}">
+                                    ${status.label}
+                                </span>
+                            </div>
+                            <span class="text-[10px] text-gray-400 font-medium truncate">${domain}</span>
+                        </div>
+
+                        <h3 class="font-semibold text-gray-800 text-xs sm:text-sm leading-snug mb-1.5 group-hover:text-blue-600 transition line-clamp-2">
+                            ${item.url ? `
+                                <a href="${item.url}" target="_blank" class="hover:underline flex items-start gap-1.5">
+                                    <span>${escapeHtml(item.title)}</span>
+                                    ${isK ? '<span class="text-red-600 font-bold text-xs shrink-0">(K)</span>' : ''}
+                                    <i class="fa-solid fa-arrow-up-right-from-square text-[9px] text-gray-400 shrink-0 mt-1"></i>
+                                </a>
+                            ` : `<span>${escapeHtml(item.title)} ${isK ? '<span class="text-red-600 font-bold text-xs">(K)</span>' : ''}</span>`}
+                        </h3>
+
+                        ${item.method || item.criteria ? `
+                            <div class="text-[10px] bg-indigo-50/70 text-indigo-900 p-2 rounded-xl border border-indigo-100/60 mb-2 space-y-0.5">
+                                ${item.method ? `<div><span class="font-semibold">Yöntem:</span> ${escapeHtml(item.method)}</div>` : ''}
+                                ${item.criteria ? `<div><span class="font-semibold">Kriterler:</span> ${escapeHtml(item.criteria)}</div>` : ''}
+                            </div>
+                        ` : ''}
+
+                        ${item.notes ? `
+                            <p class="text-[11px] text-textSecondary bg-white p-2 rounded-xl border border-gray-100 mb-2.5 line-clamp-2 italic">
+                                "${escapeHtml(item.notes)}"
+                            </p>
+                        ` : ''}
+                    </div>
+
+                    <div>
+                        ${item.tags && item.tags.length > 0 ? `
+                            <div class="flex flex-wrap gap-1 mb-2.5">
+                                ${item.tags.map(t => `<span class="text-[9px] bg-gray-200/50 text-gray-600 px-1.5 py-0.2 rounded-md">#${escapeHtml(t)}</span>`).join('')}
+                            </div>
+                        ` : ''}
+
+                        <div class="flex items-center justify-between pt-2 border-t border-gray-200/60 text-[10px] text-gray-400">
+                            <span>${item.author ? escapeHtml(item.author) : new Date(item.date).toLocaleDateString('tr-TR')}</span>
+                            <div class="flex items-center space-x-1">
+                                ${item.pdfData ? `
+                                    <button type="button" onclick="openPdf('${item.id}')" class="px-2 py-0.5 text-red-600 bg-red-50 hover:bg-red-100 border border-red-200/60 rounded-md transition text-[10px] flex items-center gap-1 font-medium cursor-pointer" title="PDF Oku">
+                                        <i class="fa-solid fa-file-pdf text-red-500"></i>
+                                        <span>PDF</span>
+                                    </button>
+                                ` : ''}
+                                <button type="button" onclick="editArticle('${item.id}')" class="p-1 hover:text-blue-600 hover:bg-blue-50 rounded-md transition" title="Düzenle">
+                                    <i class="fa-regular fa-pen-to-square"></i>
+                                </button>
+                                <button type="button" onclick="deleteArticle('${item.id}')" class="p-1 hover:text-red-600 hover:bg-red-50 rounded-md transition" title="Sil">
+                                    <i class="fa-regular fa-trash-can"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderListItem(item) {
+            const domain = item.url ? getDomain(item.url) : 'Yerel Kayıt';
+            const status = getStatusBadge(item.status);
+            const isK = item.status === 'bibliography';
+
+            return `
+                <div class="bg-gray-50/50 hover:bg-white rounded-xl p-3 border border-gray-200/70 hover:border-gray-300 transition-all flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2.5 group">
+                    <div class="flex items-center gap-2.5 min-w-0 flex-grow">
+                        <div class="w-7 h-7 rounded-lg bg-pastelBlue flex items-center justify-center text-blue-600 shrink-0 text-xs">
+                            <i class="fa-solid fa-file-lines"></i>
+                        </div>
+                        <div class="min-w-0 flex-grow">
+                            <div class="flex items-center gap-1.5">
+                                <h3 class="font-semibold text-gray-800 text-xs truncate group-hover:text-blue-600">
+                                    ${item.url ? `<a href="${item.url}" target="_blank" class="hover:underline">${escapeHtml(item.title)}</a>` : `<span>${escapeHtml(item.title)}</span>`}
+                                </h3>
+                                ${isK ? '<span class="text-red-600 font-bold text-xs shrink-0">(K)</span>' : ''}
+                                ${item.url ? `<i class="fa-solid fa-arrow-up-right-from-square text-[8px] text-gray-400 shrink-0"></i>` : ''}
+                            </div>
+                            <div class="flex items-center gap-2 text-[10px] text-textSecondary mt-0.5">
+                                <span class="font-medium text-blue-600 bg-blue-50 px-1.5 py-0.2 rounded text-[9px]">${escapeHtml(item.category)}</span>
+                                <span class="font-medium px-1.5 py-0.2 rounded text-[9px] border ${status.class}">${status.label}</span>
+                                ${item.method ? `<span class="bg-indigo-50 text-indigo-700 px-1.5 py-0.2 rounded font-medium text-[9px]">${escapeHtml(item.method)}</span>` : ''}
+                                <span>•</span>
+                                <span>${domain}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center justify-between sm:justify-end w-full sm:w-auto gap-2.5 shrink-0 pt-2 sm:pt-0 border-t sm:border-t-0 border-gray-100">
+                        ${item.pdfData ? `
+                            <button type="button" onclick="openPdf('${item.id}')" class="px-2 py-0.5 text-red-600 bg-red-50 hover:bg-red-100 border border-red-200/60 rounded-md transition text-[9px] flex items-center gap-1 font-medium cursor-pointer">
+                                <i class="fa-solid fa-file-pdf"></i>
+                                <span>PDF</span>
+                            </button>
+                        ` : ''}
+                        <div class="flex items-center space-x-1">
+                            <button type="button" onclick="editArticle('${item.id}')" class="p-1 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-md transition text-xs" title="Düzenle">
+                                <i class="fa-regular fa-pen-to-square"></i>
+                            </button>
+                            <button type="button" onclick="deleteArticle('${item.id}')" class="p-1 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-md transition text-xs" title="Sil">
+                                <i class="fa-regular fa-trash-can"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function getDomain(url) {
+            try { return new URL(url).hostname.replace('www.', ''); } catch(e) { return 'link'; }
+        }
+
+        function openModal(isEdit = false) {
+            renderCategories();
+            tempPdfData = '';
+            tempPdfName = '';
+            document.getElementById('pdfFileName').classList.add('hidden');
+            document.getElementById('pdfFileName').innerText = '';
+
+            const modal = document.getElementById('articleModal');
+            modal.classList.remove('hidden');
+
+            if (!isEdit) {
+                document.getElementById('articleForm').reset();
+                document.getElementById('editId').value = '';
+                document.getElementById('articleStatus').value = 'unread';
+                document.getElementById('modalTitle').textContent = 'Yeni Makale Kaydet';
+                toggleNewCategoryInput();
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('articleModal').classList.add('hidden');
+        }
+
+        function toggleNewCategoryInput() {
+            const select = document.getElementById('articleCategorySelect');
+            const input = document.getElementById('newCategoryInput');
+            if (select.value === '__new__') {
+                input.classList.remove('hidden');
+                input.required = true;
+            } else {
+                input.classList.add('hidden');
+                input.required = false;
+            }
+        }
+
+        async function handleFormSubmit(e) {
+            e.preventDefault();
+
+            const editId = document.getElementById('editId').value;
+            const url = document.getElementById('articleUrl').value.trim();
+            const title = document.getElementById('articleTitle').value.trim();
+            const author = document.getElementById('articleAuthor').value.trim();
+            const year = document.getElementById('articleYear').value.trim();
+            const method = document.getElementById('articleMethod').value.trim();
+            const criteria = document.getElementById('articleCriteria').value.trim();
+            
+            const selectCat = document.getElementById('articleCategorySelect').value;
+            const newCat = document.getElementById('newCategoryInput').value.trim();
+            const category = selectCat === '__new__' ? newCat : selectCat;
+            
+            const status = document.getElementById('articleStatus').value;
+            const tags = document.getElementById('articleTags').value.split(',').map(t => t.trim()).filter(Boolean);
+            const notes = document.getElementById('articleNotes').value;
+
+            if (selectCat === '__new__' && newCat) {
+                if (!customCategories.includes(newCat)) {
+                    customCategories.push(newCat);
+                    localStorage.setItem('academic_categories', JSON.stringify(customCategories));
+                }
+            }
+
+            if (editId) {
+                const index = articles.findIndex(a => a.id === editId);
+                if (index !== -1) {
+                    const existingPdfData = tempPdfData || articles[index].pdfData || '';
+                    const existingPdfName = tempPdfName || articles[index].pdfName || '';
+                    const updatedArticle = { 
+                        ...articles[index], url, title, author, year, method, criteria, category, status, tags, notes, pdfData: existingPdfData, pdfName: existingPdfName 
+                    };
+                    await saveArticleToDB(updatedArticle);
+                }
+            } else {
+                const newArticle = {
+                    id: Date.now().toString(),
+                    url, title, author, year, method, criteria, category, status, tags, notes,
+                    pdfData: tempPdfData,
+                    pdfName: tempPdfName,
+                    date: new Date().toISOString()
+                };
+                await saveArticleToDB(newArticle);
+            }
+
+            articles = await loadArticlesFromDB();
+            renderCategories();
+            renderArticles();
+            renderDashboard();
+            renderMatrixTable();
+            closeModal();
+        }
+
+        function editArticle(id) {
+            const item = articles.find(a => a.id === id);
+            if (!item) return;
+
+            openModal(true);
+            document.getElementById('editId').value = item.id;
+            document.getElementById('articleUrl').value = item.url || '';
+            document.getElementById('articleTitle').value = item.title;
+            document.getElementById('articleAuthor').value = item.author || '';
+            document.getElementById('articleYear').value = item.year || '2026';
+            document.getElementById('articleMethod').value = item.method || '';
+            document.getElementById('articleCriteria').value = item.criteria || '';
+            document.getElementById('articleStatus').value = item.status || 'unread';
+            document.getElementById('articleTags').value = item.tags ? item.tags.join(', ') : '';
+            document.getElementById('articleNotes').value = item.notes || '';
+            document.getElementById('modalTitle').textContent = 'Makaleyi Düzenle';
+
+            if (item.pdfData) {
+                const fileNameSpan = document.getElementById('pdfFileName');
+                fileNameSpan.innerText = `✓ Kayıtlı PDF: ${item.pdfName || 'Makale.pdf'}`;
+                fileNameSpan.classList.remove('hidden');
+            }
+
+            const select = document.getElementById('articleCategorySelect');
+            select.value = item.category;
+            toggleNewCategoryInput();
+        }
+
+        async function deleteArticle(id) {
+            if (confirm('Bu makaleyi kütüphaneden silmek istediğinize emin misiniz?')) {
+                await deleteArticleFromDB(id);
+                articles = await loadArticlesFromDB();
+                renderCategories();
+                renderArticles();
+                renderDashboard();
+                renderMatrixTable();
+            }
+        }
+
+        function exportData() {
+            if (!articles || articles.length === 0) {
+                alert('İndirilecek makale bulunmuyor.');
+                return;
+            }
+
+            const sorted = [...articles].sort((a, b) => {
+                const dateA = new Date(a.date || parseInt(a.id) || 0).getTime();
+                const dateB = new Date(b.date || parseInt(b.id) || 0).getTime();
+                return dateB - dateA;
+            });
+
+            let csvLines = [];
+            csvLines.push(['Sıra', 'Makale Başlığı', 'Yazar', 'Yıl', 'Yöntem', 'Kriterler', 'Kategori', 'Çalışma Durumu', 'Etiketler', 'Notlar', 'URL'].join(';'));
+
+            sorted.forEach((a, index) => {
+                const statusBadge = getStatusBadge(a.status);
+                const tagsStr = a.tags ? a.tags.join(', ') : '';
+                const clean = (val) => `"${(val || '').replace(/"/g, '""')}"`;
+
+                csvLines.push([
+                    index + 1, clean(a.title), clean(a.author), clean(a.year), clean(a.method), clean(a.criteria), 
+                    clean(a.category), clean(statusBadge.label), clean(tagsStr), clean(a.notes), clean(a.url)
+                ].join(';'));
+            });
+
+            const csvContent = csvLines.join('\n');
+            const blob = new Blob(['\ufeff' + csvContent], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `Akademik_Tez_Kutuphanesi_${new Date().toISOString().slice(0, 10)}.csv`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        function importCsvData(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = async function(e) {
+                try {
+                    const text = e.target.result;
+                    const lines = text.split(/\r\n|\n/).filter(line => line.trim() !== '');
+
+                    if (lines.length <= 1) {
+                        alert('Dosyada geçerli kayıt bulunamadı.');
+                        return;
+                    }
+
+                    let addedCount = 0;
+                    for (let i = 1; i < lines.length; i++) {
+                        const row = parseCsvRow(lines[i]);
+                        if (row.length >= 2) {
+                            const title = unescapeCsvValue(row[1]);
+                            const author = unescapeCsvValue(row[2]) || '';
+                            const year = unescapeCsvValue(row[3]) || '';
+                            const method = unescapeCsvValue(row[4]) || '';
+                            const criteria = unescapeCsvValue(row[5]) || '';
+                            const category = unescapeCsvValue(row[6]) || 'Genel';
+                            const statusLabel = unescapeCsvValue(row[7]);
+                            const status = getStatusKeyByLabel(statusLabel);
+                            const tagsStr = unescapeCsvValue(row[8]);
+                            const tags = tagsStr ? tagsStr.split(',').map(t => t.trim()).filter(Boolean) : [];
+                            const notes = unescapeCsvValue(row[9]) || '';
+                            const url = unescapeCsvValue(row[10]) || '';
+
+                            if (title && title !== 'Makale Başlığı') {
+                                const newArticle = {
+                                    id: (Date.now() + i).toString(),
+                                    url: url.includes('http') ? url : '',
+                                    title, author, year, method, criteria, category, status, tags, notes,
+                                    pdfData: '', pdfName: '',
+                                    date: new Date().toISOString()
+                                };
+                                await saveArticleToDB(newArticle);
+                                addedCount++;
+                            }
+                        }
+                    }
+
+                    articles = await loadArticlesFromDB();
+                    renderCategories();
+                    renderArticles();
+                    renderDashboard();
+                    renderMatrixTable();
+                    alert(`Başarıyla ${addedCount} makale kütüphanenize yüklendi!`);
+                    event.target.value = '';
+                } catch (err) {
+                    console.error("CSV hatası:", err);
+                    alert("Dosya yüklenirken hata oluştu.");
+                }
+            };
+            reader.readAsText(file, 'UTF-8');
+        }
+
+        function parseCsvRow(rowStr) {
+            let result = [];
+            let insideQuote = false;
+            let entry = '';
+
+            for (let i = 0; i < rowStr.length; i++) {
+                let char = rowStr[i];
+                if (char === '"') {
+                    insideQuote = !insideQuote;
+                } else if (char === ';' && !insideQuote) {
+                    result.push(entry);
+                    entry = '';
+                } else {
+                    entry += char;
+                }
+            }
+            result.push(entry);
+            return result;
+        }
+
+        function unescapeCsvValue(val) {
+            if (!val) return '';
+            let clean = val.trim();
+            if (clean.startsWith('"') && clean.endsWith('"')) {
+                clean = clean.substring(1, clean.length - 1);
+            }
+            return clean.replace(/""/g, '"');
+        }
+
+        function escapeHtml(text) {
+            if (!text) return '';
+            return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+        }
+    </script>
+</body>
+</html>
