@@ -1,34 +1,61 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
+    <!-- Firebase SDK (v10 Modular) ve Konfigürasyon -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged, sendEmailVerification } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { getFirestore, collection, addDoc, getDocs, doc, getDoc, setDoc, updateDoc, deleteDoc, query, where } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyBbhK4DsRHiHHUktUK7ShBd0pY7HGs76U8",
+            authDomain: "akademiks-7b0b6.firebaseapp.com",
+            projectId: "akademiks-7b0b6",
+            storageBucket: "akademiks-7b0b6.firebasestorage.app",
+            messagingSenderId: "476462796735",
+            appId: "1:476462796735:web:774afbcdda1b3a97fc5b0a",
+            measurementId: "G-3PD8LFBEMT"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        window.firebaseAuth = auth;
+        window.firebaseDb = db;
+        window.signInWithEmailAndPassword = signInWithEmailAndPassword;
+        window.createUserWithEmailAndPassword = createUserWithEmailAndPassword;
+        window.signOut = signOut;
+        window.onAuthStateChanged = onAuthStateChanged;
+        window.sendEmailVerification = sendEmailVerification;
+        window.collection = collection;
+        window.addDoc = addDoc;
+        window.getDocs = getDocs;
+        window.doc = doc;
+        window.getDoc = getDoc;
+        window.setDoc = setDoc;
+        window.updateDoc = updateDoc;
+        window.deleteDoc = deleteDoc;
+        window.query = query;
+        window.where = where;
+    </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Akademiks</title>
     
-    <!-- Sekme İkonu (Favicon) -->
     <link rel="icon" type="image/png" href="logo.png">
-
-    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Inter Font -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <!-- FontAwesome İkonları -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <script>
         tailwind.config = {
             theme: {
                 extend: {
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                    },
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
                     colors: {
-                        pastelBlue: '#E3F2FD',
-                        pastelPurple: '#EDE7F6',
-                        pastelMint: '#E8F5E9',
-                        pastelPeach: '#FFF3E0',
-                        textPrimary: '#2C3E50',
-                        textSecondary: '#6C7A89'
+                        pastelBlue: '#E3F2FD', pastelPurple: '#EDE7F6', pastelMint: '#E8F5E9',
+                        pastelPeach: '#FFF3E0', textPrimary: '#2C3E50', textSecondary: '#6C7A89'
                     }
                 }
             }
@@ -37,22 +64,146 @@
 </head>
 <body class="bg-[#EEF1F6] text-textPrimary font-sans antialiased min-h-screen py-6 sm:py-10 px-3 sm:px-6 flex items-center justify-center selection:bg-blue-100">
 
+    <!-- AKADEMİKS PRO - KARŞILAMA VE ABONELİK POPUP AFİŞİ (Sadece X'e basınca kapanır) -->
+    <div id="promoPopup" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl max-w-lg w-full p-8 shadow-2xl border border-gray-100 text-center relative overflow-hidden transform transition-all">
+            
+            <div class="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600"></div>
+
+            <button type="button" onclick="closePromoPopup()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 p-1.5 rounded-full hover:bg-gray-100 transition cursor-pointer" title="Kapat">
+                <i class="fa-solid fa-xmark text-sm"></i>
+            </button>
+
+            <div class="w-16 h-16 bg-gradient-to-br from-blue-50 to-indigo-50 text-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-5 text-2xl shadow-inner border border-blue-100/60">
+                <i class="fa-solid fa-graduation-cap"></i>
+            </div>
+
+            <span class="bg-blue-50 text-blue-700 font-semibold text-[11px] px-3 py-1 rounded-full uppercase tracking-wider mb-3 inline-block">
+                Akademik Kariyerini Kolaylaştır
+            </span>
+            <h2 class="text-xl font-extrabold text-gray-900 mb-2 tracking-tight">
+                Tez ve Makale Yönetiminde <span class="text-blue-600">Yeni Nesil Asistan</span>
+            </h2>
+            
+            <p class="text-xs text-gray-600 leading-relaxed mb-6 px-2">
+                Yüzlerce makaleyi tek tıkla arşivle, <b>APA 7 A-Z Otomatik Kaynakça Matrisi</b> oluştur, verilerini bulutta güvenle sakla ve zamandan kazan.
+            </p>
+
+            <div class="bg-gray-50 rounded-2xl p-4 mb-6 text-left space-y-2.5 border border-gray-100">
+                <div class="flex items-center gap-2.5 text-xs text-gray-700 font-medium">
+                    <i class="fa-solid fa-circle-check text-emerald-500"></i>
+                    <span>Sınırsız Makale & PDF Arşivleme</span>
+                </div>
+                <div class="flex items-center gap-2.5 text-xs text-gray-700 font-medium">
+                    <i class="fa-solid fa-circle-check text-emerald-500"></i>
+                    <span>Tek Tuşla Word Uyumlu A-Z Kaynakça Tablosu</span>
+                </div>
+                <div class="flex items-center gap-2.5 text-xs text-gray-700 font-medium">
+                    <i class="fa-solid fa-circle-check text-emerald-500"></i>
+                    <span>Çoklu Format Atıf Üretici (APA 7, IEEE, Harvard)</span>
+                </div>
+            </div>
+
+            <div class="bg-gradient-to-br from-indigo-900 to-blue-900 text-white rounded-2xl p-4 mb-6 flex items-center justify-between shadow-md">
+                <div class="text-left">
+                    <div class="text-[10px] text-indigo-200 uppercase tracking-wider font-semibold">Pro Sınırsız Paket</div>
+                    <div class="text-lg font-bold">90 TL <span class="text-xs font-normal text-indigo-200">/ ay</span></div>
+                </div>
+                <span class="bg-white/10 text-white text-[11px] px-2.5 py-1 rounded-xl border border-white/20">
+                    İstediğin Zaman İptal Et
+                </span>
+            </div>
+
+            <div class="space-y-2.5">
+                <a href="https://www.shopier.com/akademiks/52227364" target="_blank" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-xl text-xs font-bold transition shadow-lg hover:shadow-xl flex items-center justify-center gap-2 cursor-pointer">
+                    <i class="fa-solid fa-bolt"></i>
+                    <span>Hemen Pro Üye Ol (90 TL)</span>
+                </a>
+                
+                <button type="button" onclick="openLoginFromPopup()" class="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 py-2.5 rounded-xl text-xs font-semibold transition cursor-pointer">
+                    Zaten Hesabım Var / Giriş Yap
+                </button>
+            </div>
+
+            <p class="text-[10px] text-gray-400 mt-4">
+                Güvenli ödeme altyapısı ile anında aktifleşir.
+            </p>
+        </div>
+    </div>
+
+    <!-- GİRİŞ / KAYIT EKRANI -->
+    <div id="authModal" class="fixed inset-0 bg-black/60 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-3xl max-w-md w-full p-8 shadow-2xl border border-gray-100 text-center relative">
+            <button type="button" onclick="closeAuthModal()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 p-1.5 rounded-full hover:bg-gray-100 transition cursor-pointer" title="Kapat">
+                <i class="fa-solid fa-xmark text-sm"></i>
+            </button>
+            <div class="w-14 h-14 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-4 text-2xl shadow-xs border border-blue-100">
+                <i class="fa-solid fa-cloud-arrow-up"></i>
+            </div>
+            <h2 id="authModalTitle" class="text-lg font-bold text-gray-800 mb-1">Akademiks Bulut'a Giriş Yap</h2>
+            <p class="text-xs text-textSecondary mb-6">Her yerden erişebileceğiniz kişisel akademik kütüphaneniz.</p>
+
+            <form id="authForm" onsubmit="handleAuthSubmit(event)" class="space-y-3.5 text-left">
+                <div>
+                    <label class="block text-xs font-medium text-gray-700 mb-1">E-Posta Adresi</label>
+                    <input type="email" id="authEmail" required placeholder="ornek@universite.edu.tr" 
+                           class="w-full px-3.5 py-2 bg-gray-50 border border-gray-200 rounded-xl text-xs focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition">
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-gray-700 mb-1">Şifre</label>
+                    <input type="password" id="authPassword" required placeholder="••••••••" 
+                           class="w-full px-3.5 py-2 bg-gray-50 border border-gray-200 rounded-xl text-xs focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition">
+                </div>
+
+                <button type="submit" id="authSubmitBtn" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2.5 rounded-xl text-xs font-semibold transition shadow-md hover:shadow-lg cursor-pointer mt-2">
+                    Giriş Yap
+                </button>
+            </form>
+
+            <div class="mt-5 pt-4 border-t border-gray-100 text-xs">
+                <span id="authToggleText" class="text-gray-500">Hesabınız yok mu?</span>
+                <button type="button" onclick="toggleAuthMode()" class="text-blue-600 font-semibold hover:underline ml-1 cursor-pointer" id="authToggleBtn">Kayıt Ol</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ÖDEME ONAY BEKLEME EKRANI (Ödeme yapmamış/onaylanmamış kullanıcılar için) -->
+    <div id="paywallModal" class="fixed inset-0 bg-black/70 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-3xl max-w-md w-full p-8 shadow-2xl border border-gray-100 text-center relative">
+            <div class="w-16 h-16 bg-amber-50 text-amber-600 rounded-2xl flex items-center justify-center mx-auto mb-4 text-2xl shadow-inner border border-amber-100">
+                <i class="fa-solid fa-clock-rotate-left"></i>
+            </div>
+            <h2 class="text-lg font-extrabold text-gray-900 mb-2">Ödeme Onayı Bekleniyor</h2>
+            <p class="text-xs text-gray-600 leading-relaxed mb-6">
+                Hesabınız oluşturuldu ancak Pro abonelik ödemeniz henüz onaylanmamış. Lütfen ödeme yaparken kullandığınız e-posta adresiyle ödemeyi tamamlayın; kısa süre içinde hesabınız aktif edilecektir.
+            </p>
+
+            <div class="space-y-2.5">
+                <a href="https://www.shopier.com/akademiks/52227364" target="_blank" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-xl text-xs font-bold transition shadow-md flex items-center justify-center gap-2 cursor-pointer">
+                    <i class="fa-solid fa-bolt"></i>
+                    <span>Hemen Pro Üye Ol (90 TL)</span>
+                </a>
+                <button type="button" onclick="logoutUser()" class="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 py-2.5 rounded-xl text-xs font-semibold transition cursor-pointer">
+                    Çıkış Yap / Başka Hesapla Dene
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- UYGULAMA ÇERÇEVESİ -->
     <div class="max-w-6xl w-full bg-white rounded-3xl border border-gray-200/90 shadow-xl overflow-hidden flex flex-col min-h-[85vh] my-auto relative">
 
-        <!-- ÜST BAŞLIK / NAV & SEKMELER -->
         <header class="bg-white/90 backdrop-blur-md border-b border-gray-100 px-6 sm:px-8 py-4 flex flex-col md:flex-row md:items-center justify-between gap-4 sticky top-0 z-30">
             <div class="flex items-center space-x-3.5">
-                    <div class="w-10 h-10 rounded-2xl bg-[#FFF3E0] flex items-center justify-center shadow-xs border border-amber-200/50 overflow-hidden p-1.5 shrink-0">
-    <img src="logo.png" alt="Logo" class="w-full h-full object-contain block">
-</div>
+<div class="h-16 shrink-0 flex items-center">
+    <img src="logo.png" alt="Logo" class="h-full object-contain block">
+                </div>
                 <div>
                     <h1 class="font-bold text-base sm:text-lg text-gray-800 tracking-tight">Akademiks</h1>
                     <p class="text-[11px] text-textSecondary font-medium">Makale Arşivi, Literatür Matrisi & Atıf Üretici</p>
                 </div>
             </div>
 
-            <!-- MOD SEKMELERİ -->
             <div class="flex items-center gap-1.5 bg-gray-100/80 p-1 rounded-2xl border border-gray-200/60 flex-wrap self-start md:self-auto">
                 <button type="button" id="tabLibraryBtn" onclick="switchMainTab('library')" class="px-3 py-1.5 rounded-xl text-xs font-semibold transition flex items-center gap-1.5 bg-white text-gray-800 shadow-xs">
                     <i class="fa-solid fa-layer-group text-blue-600"></i>
@@ -80,10 +231,8 @@
             </div>
         </header>
 
-        <!-- ANA İÇERİK SEKMELERİ -->
-        <main class="flex-grow p-6 sm:p-8 flex flex-col justify-between pb-20">
+        <main class="flex-grow p-6 sm:p-8 flex flex-col justify-between pb-24">
 
-            <!-- 1. SEKME: KÜTÜPHANEM -->
             <div id="sectionLibrary">
                 <div class="flex flex-col md:flex-row gap-4 mb-6 justify-between items-stretch md:items-center">
                     <div class="relative flex-grow max-w-md">
@@ -121,13 +270,12 @@
                     </div>
                     <h3 class="text-gray-700 font-semibold text-xs mb-1">Henüz makale bulunmuyor</h3>
                     <p class="text-[11px] text-textSecondary max-w-xs mx-auto mb-3">Seçilen kategori veya arama kriterine uygun kayıt yok.</p>
-                    <button type="button" onclick="openModal()" class="text-xs bg-blue-50 text-blue-600 hover:bg-blue-100 font-medium px-3.5 py-1.5 rounded-lg transition">
+                    <button type="button" onclick="openModal(false)" class="text-xs bg-blue-50 text-blue-600 hover:bg-blue-100 font-medium px-3.5 py-1.5 rounded-lg transition">
                         İlk Makaleyi Ekle
                     </button>
                 </div>
             </div>
 
-            <!-- 2. SEKME: TEZ LİTERATÜR ÖZET TABLOSU (APA 7 A-Z & DETAYLI KÜNYE) -->
             <div id="sectionMatrix" class="hidden space-y-4">
                 <div class="bg-indigo-50/60 border border-indigo-100 rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                     <div>
@@ -154,14 +302,11 @@
                                 <th class="p-3 font-semibold">Tam APA 7 Kaynakça Künyesi</th>
                             </tr>
                         </thead>
-                        <tbody id="matrixTableBody" class="divide-y divide-gray-100">
-                            <!-- Dinamik A-Z Doldurulacak -->
-                        </tbody>
+                        <tbody id="matrixTableBody" class="divide-y divide-gray-100"></tbody>
                     </table>
                 </div>
             </div>
 
-            <!-- 3. SEKME: DASHBOARD -->
             <div id="sectionDashboard" class="hidden space-y-6">
                 <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
                     <div class="bg-pastelBlue/40 border border-blue-100 p-4 rounded-2xl flex items-center gap-3.5">
@@ -245,7 +390,6 @@
                 </div>
             </div>
 
-            <!-- 4. SEKME: ATIF ÜRETİCİ (APA 7, IEEE, HARVARD) -->
             <div id="sectionApa" class="hidden max-w-4xl mx-auto w-full">
                 <div class="bg-pastelPurple/30 rounded-2xl p-5 border border-purple-100/80 mb-6 flex items-center justify-between flex-wrap gap-3">
                     <div>
@@ -322,7 +466,7 @@
                         <div class="bg-white p-5 rounded-2xl border border-gray-200 shadow-xs flex-grow flex flex-col justify-between">
                             <div>
                                 <div class="flex items-center justify-between mb-3 pb-2 border-b border-gray-100">
-                                    <span class="text-xs font-semibold text-gray-700" id="citationPreviewLabel">APA 7 Önizleme</span>
+                                    <span class="text-xs font-semibold text-gray-700" id="citationPreviewLabel">APA 7 Formatı Önizleme</span>
                                     <span class="text-[10px] bg-purple-50 text-purple-600 font-medium px-2 py-0.5 rounded-md">Canlı Üretim</span>
                                 </div>
                                 <div id="apaOutput" class="text-xs text-gray-800 leading-relaxed font-sans min-h-[90px] p-3 bg-gray-50 rounded-xl border border-gray-100">
@@ -353,13 +497,30 @@
             </div>
 
             <footer class="mt-8 pt-4 border-t border-gray-100 flex items-center justify-between text-[11px] text-gray-400">
-                <span>Akademiks - Akademik Tez &amp; Makale Asistanı</span>
-                <span></span>
+                <div class="flex items-center gap-2">
+                    <span></span>
+                </div>
+                <span id="cloudStatusText" class="text-blue-600 font-semibold">Bağlanıyor...</span>
             </footer>
 
         </main>
 
-        <!-- ÇERÇEVE İÇİ SAĞ ALT EYLEM BUTONLARI -->
+        <!-- SOL ALT KÖŞE: GİRİŞ YAP / KULLANICI ADI & ÇIKIŞ YAP ÇERÇEVESİ -->
+        <div class="absolute bottom-5 left-6 z-20 flex items-center gap-2 bg-white/90 backdrop-blur-md px-3.5 py-2 rounded-2xl border border-gray-200 shadow-md">
+            <button type="button" id="btnLoginFrameBtn" onclick="openLoginModal()" class="bg-blue-600 hover:bg-blue-700 text-white px-3.5 py-1.5 rounded-xl text-xs font-semibold transition shadow-xs flex items-center gap-1.5 cursor-pointer">
+                <i class="fa-solid fa-right-to-bracket text-xs"></i>
+                <span>Giriş Yap</span>
+            </button>
+
+            <div id="userSessionFrame" class="hidden items-center gap-2.5">
+                <div id="userEmailDisplay" class="text-xs text-gray-700 font-semibold truncate max-w-[180px]"></div>
+                <button type="button" onclick="logoutUser()" title="Çıkış Yap" class="bg-gray-100 hover:bg-red-50 text-gray-600 hover:text-red-600 px-3 py-1.5 rounded-xl text-xs font-medium transition cursor-pointer flex items-center gap-1">
+                    <i class="fa-solid fa-right-from-bracket"></i>
+                    <span>Çıkış Yap</span>
+                </button>
+            </div>
+        </div>
+
         <div class="absolute bottom-5 right-6 z-20 flex items-center gap-2">
             <input type="file" id="importCsvFile" accept=".csv" onchange="importCsvData(event)" class="hidden">
             <button type="button" onclick="document.getElementById('importCsvFile').click()" title="Excel/CSV Dosyasından Kütüphaneye Yükle" class="bg-blue-600 hover:bg-blue-700 text-white px-3.5 py-2 rounded-xl text-xs font-semibold transition-all shadow-md hover:shadow-lg flex items-center gap-1.5 border border-blue-500/30 active:scale-95 cursor-pointer">
@@ -374,7 +535,6 @@
         </div>
     </div>
 
-    <!-- EKLEME / DÜZENLEME MODALI -->
     <div id="articleModal" class="fixed inset-0 bg-black/40 backdrop-blur-xs z-50 flex items-center justify-center hidden p-4">
         <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-gray-100 transition-all transform scale-100 max-h-[90vh] overflow-y-auto" id="modalCard">
             
@@ -388,7 +548,6 @@
             <form id="articleForm" class="space-y-3">
                 <input type="hidden" id="editId">
 
-                <!-- PDF Yükleme -->
                 <div class="bg-red-50/50 p-3 rounded-xl border border-red-100">
                     <label class="block text-xs font-semibold text-gray-800 mb-1 flex items-center gap-1.5">
                         <i class="fa-solid fa-file-pdf text-red-500"></i>
@@ -475,14 +634,32 @@
 
                 <div class="flex justify-end space-x-2 pt-2 border-t border-gray-100">
                     <button type="button" id="btnCancelModal" class="px-4 py-1.5 text-xs font-medium text-gray-600 hover:bg-gray-100 rounded-xl transition cursor-pointer">İptal</button>
-                    <button type="submit" class="px-5 py-1.5 text-xs font-medium bg-blue-600 hover:bg-blue-700 text-white rounded-xl transition shadow-xs cursor-pointer">Kaydet</button>
+                    <button type="submit" class="px-5 py-1.5 text-xs font-medium bg-blue-600 hover:bg-blue-700 text-white rounded-xl transition shadow-xs cursor-pointer">Buluta Kaydet</button>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- JAVASCRIPT MANTIĞI & INDEXEDDB -->
+    <!-- Script Kodları -->
     <script>
+        function closePromoPopup() {
+            document.getElementById('promoPopup').classList.add('hidden');
+            switchMainTab('library');
+        }
+
+        function openLoginFromPopup() {
+            document.getElementById('promoPopup').classList.add('hidden');
+            document.getElementById('authModal').classList.remove('hidden');
+        }
+
+        function openLoginModal() {
+            document.getElementById('authModal').classList.remove('hidden');
+        }
+
+        function closeAuthModal() {
+            document.getElementById('authModal').classList.add('hidden');
+        }
+
         const DEFAULT_CATEGORIES = ['Risk Analizi', 'ÇKKV / MCDM', 'Denizcilik', 'Yapay Zeka', 'Genel'];
 
         let articles = [];
@@ -491,87 +668,75 @@
         let currentViewMode = localStorage.getItem('view_mode') || 'card';
         let tempPdfData = '';
         let tempPdfName = '';
+        
+        let currentUser = null;
+        let isSignUpMode = false;
 
-        const DB_NAME = 'AcademicArticleVault';
-        const DB_VERSION = 1;
-        const STORE_NAME = 'articles';
-        let db = null;
+        window.addEventListener('DOMContentLoaded', () => {
+            setTimeout(() => {
+                if (window.firebaseAuth) {
+                    window.onAuthStateChanged(window.firebaseAuth, async (user) => {
+                        const btnLoginFrame = document.getElementById('btnLoginFrameBtn');
+                        const userSessionFrame = document.getElementById('userSessionFrame');
+                        const emailDisp = document.getElementById('userEmailDisplay');
+                        const paywallModal = document.getElementById('paywallModal');
 
-        function initDB() {
-            return new Promise((resolve, reject) => {
-                const request = indexedDB.open(DB_NAME, DB_VERSION);
-                request.onupgradeneeded = (e) => {
-                    const db = e.target.result;
-                    if (!db.objectStoreNames.contains(STORE_NAME)) {
-                        db.createObjectStore(STORE_NAME, { keyPath: 'id' });
-                    }
-                };
-                request.onsuccess = (e) => {
-                    db = e.target.result;
-                    resolve(db);
-                };
-                request.onerror = (e) => reject(e);
-            });
-        }
+                        if (user) {
+                            if (!user.emailVerified) {
+                                document.getElementById('cloudStatusText').textContent = "● E-posta Onayı Bekleniyor";
+                                document.getElementById('promoPopup').classList.add('hidden');
+                                document.getElementById('authModal').classList.remove('hidden');
+                                return;
+                            }
 
-        async function loadArticlesFromDB() {
-            return new Promise((resolve, reject) => {
-                const transaction = db.transaction([STORE_NAME], 'readonly');
-                const store = transaction.objectStore(STORE_NAME);
-                const request = store.getAll();
-                request.onsuccess = () => resolve(request.result || []);
-                request.onerror = () => reject(request.error);
-            });
-        }
+                            // Firestore'dan kullanıcının Pro abonelik durumunu kontrol et
+                            const userDocRef = window.doc(window.firebaseDb, "users", user.uid);
+                            const userDoc = await window.getDoc(userDocRef);
+                            
+                            let isPro = false;
+                            if (userDoc.exists() && userDoc.data().isPro === true) {
+                                isPro = true;
+                            }
 
-        async function saveArticleToDB(article) {
-            return new Promise((resolve, reject) => {
-                const transaction = db.transaction([STORE_NAME], 'readwrite');
-                const store = transaction.objectStore(STORE_NAME);
-                const request = store.put(article);
-                request.onsuccess = () => resolve();
-                request.onerror = () => reject(request.error);
-            });
-        }
+                            // ÖDEME ONAYLANMAMIŞSA: Kütüphaneye sokma, ödeme bekliyor ekranını göster
+                            if (!isPro) {
+                                currentUser = null;
+                                document.getElementById('promoPopup').classList.add('hidden');
+                                document.getElementById('authModal').classList.add('hidden');
+                                paywallModal.classList.remove('hidden');
+                                btnLoginFrame.classList.remove('hidden');
+                                userSessionFrame.classList.add('hidden');
+                                userSessionFrame.classList.remove('flex');
+                                document.getElementById('cloudStatusText').textContent = "● Ödeme Onayı Bekleniyor";
+                                return;
+                            }
 
-        async function deleteArticleFromDB(id) {
-            return new Promise((resolve, reject) => {
-                const transaction = db.transaction([STORE_NAME], 'readwrite');
-                const store = transaction.objectStore(STORE_NAME);
-                const request = store.delete(id);
-                request.onsuccess = () => resolve();
-                request.onerror = () => reject(request.error);
-            });
-        }
+                            // ÖDEME ONAYLANMIŞ KULLANICI İSE GİRİŞE İZİN VER
+                            currentUser = user;
+                            document.getElementById('authModal').classList.add('hidden');
+                            document.getElementById('promoPopup').classList.add('hidden');
+                            paywallModal.classList.add('hidden');
+                            
+                            btnLoginFrame.classList.add('hidden');
+                            userSessionFrame.classList.remove('hidden');
+                            userSessionFrame.classList.add('flex');
+                            emailDisp.textContent = user.email;
 
-        document.addEventListener('DOMContentLoaded', async () => {
-            try {
-                await initDB();
-                articles = await loadArticlesFromDB();
+                            document.getElementById('cloudStatusText').textContent = "● Buluta Bağlı (Pro)";
+                            await loadArticlesFromCloud();
+                        } else {
+                            currentUser = null;
+                            paywallModal.classList.add('hidden');
+                            btnLoginFrame.classList.remove('hidden');
+                            userSessionFrame.classList.add('hidden');
+                            userSessionFrame.classList.remove('flex');
+                            emailDisp.textContent = '';
 
-                if (articles.length === 0) {
-                    const sample = {
-                        id: '1',
-                        url: 'https://doi.org/10.1016/j.ress.2023.109123',
-                        title: 'Analysis & Management of Bulk Grain Cargo Transportation Risks on Ships',
-                        author: 'Kaplan, Ö.',
-                        year: '2026',
-                        method: 'International Journal of Risk Assessment and Management',
-                        criteria: '15 (2)',
-                        category: 'Risk Analizi',
-                        status: 'bibliography',
-                        tags: ['Grain Cargo', 'Fuzzy AHP', 'Safety'],
-                        notes: 'Kaplan, Ö. (2026). Analysis & Management of Bulk Grain Cargo Transportation Risks on Ships. <i>International Journal of Risk Assessment and Management</i>, 15(2). https://doi.org/10.1016/j.ress.2023.109123',
-                        pdfData: '',
-                        pdfName: '',
-                        date: new Date().toISOString()
-                    };
-                    await saveArticleToDB(sample);
-                    articles = [sample];
+                            document.getElementById('cloudStatusText').textContent = "● Oturum Açılmadı";
+                        }
+                    });
                 }
-            } catch (err) {
-                console.error("IndexedDB başlatılamadı:", err);
-            }
+            }, 800);
 
             document.getElementById('btnOpenModal').addEventListener('click', () => openModal(false));
             document.getElementById('btnCloseModal').addEventListener('click', closeModal);
@@ -585,6 +750,88 @@
             renderMatrixTable();
             generateApaCitation();
         });
+
+        function toggleAuthMode() {
+            isSignUpMode = !isSignUpMode;
+            document.getElementById('authModalTitle').textContent = isSignUpMode ? "Yeni Hesap Oluştur" : "Akademiks Bulut'a Giriş Yap";
+            document.getElementById('authSubmitBtn').textContent = isSignUpMode ? "Kayıt Ol ve Doğrulama Maili Gönder" : "Giriş Yap";
+            document.getElementById('authToggleText').textContent = isSignUpMode ? "Zaten hesabınız var mı?" : "Hesabınız yok mu?";
+            document.getElementById('authToggleBtn').textContent = isSignUpMode ? "Giriş Yap" : "Kayıt Ol";
+        }
+
+        async function handleAuthSubmit(e) {
+            e.preventDefault();
+            const email = document.getElementById('authEmail').value;
+            const pass = document.getElementById('authPassword').value;
+
+            try {
+                if (isSignUpMode) {
+                    const userCredential = await window.createUserWithEmailAndPassword(window.firebaseAuth, email, pass);
+                    await window.sendEmailVerification(userCredential.user);
+                    
+                    // Yeni kayıt olan kullanıcıya otomatik isPro: false kaydı açıyoruz
+                    await window.setDoc(window.doc(window.firebaseDb, "users", userCredential.user.uid), {
+                        email: email,
+                        isPro: false,
+                        createdAt: new Date().toISOString()
+                    });
+
+                    alert("Kayıt başarılı! E-posta adresinize bir doğrulama bağlantısı gönderildi. Lütfen gelen kutunuzu kontrol edip bağlantıya tıklayın, ardından giriş yapın.");
+                    
+                    await window.signOut(window.firebaseAuth);
+                    toggleAuthMode();
+                } else {
+                    const userCredential = await window.signInWithEmailAndPassword(window.firebaseAuth, email, pass);
+                    
+                    if (!userCredential.user.emailVerified) {
+                        alert("E-posta adresiniz henüz doğrulanmamış! Lütfen size gelen doğrulama bağlantısına tıklayın.");
+                        await window.signOut(window.firebaseAuth);
+                        return;
+                    }
+                }
+            } catch (err) {
+                alert("Hata: " + err.message);
+            }
+        }
+
+        async function logoutUser() {
+            await window.signOut(window.firebaseAuth);
+            location.reload();
+        }
+
+        async function loadArticlesFromCloud() {
+            if (!currentUser) return;
+            try {
+                const q = window.query(window.collection(window.firebaseDb, "articles"), window.where("uid", "==", currentUser.uid));
+                const querySnapshot = await window.getDocs(q);
+                articles = [];
+                querySnapshot.forEach((docSnap) => {
+                    articles.push({ id: docSnap.id, ...docSnap.data() });
+                });
+                renderCategories();
+                renderArticles();
+                renderDashboard();
+                renderMatrixTable();
+            } catch (err) {
+                console.error("Bulut verileri çekilemedi:", err);
+            }
+        }
+
+        async function saveArticleToCloud(articleData) {
+            if (!currentUser) return;
+            if (articleData.id && !articleData.id.includes('-temp')) {
+                const docRef = window.doc(window.firebaseDb, "articles", articleData.id);
+                await window.updateDoc(docRef, articleData);
+            } else {
+                delete articleData.id;
+                await window.addDoc(window.collection(window.firebaseDb, "articles"), articleData);
+            }
+        }
+
+        async function deleteArticleFromCloud(id) {
+            if (!currentUser) return;
+            await window.deleteDoc(window.doc(window.firebaseDb, "articles", id));
+        }
 
         function handlePdfFileUpload(event) {
             const file = event.target.files[0];
@@ -659,14 +906,10 @@
             }
         }
 
-        // TEZ LİTERATÜR MATRİSİNİ OLUŞTURMA (APA 7 A-Z ALFABETİK YAZAR SOYADINA GÖRE)
         function renderMatrixTable() {
             const tbody = document.getElementById('matrixTableBody');
-            
-            // 1. Sadece (K) yani Kaynakçada Kullanıldı olanları süzüyoruz
             const filteredMatrixArticles = articles.filter(a => a.status === 'bibliography');
 
-            // 2. Yazar Soyadına Göre A'dan Z'ye Alfabetik Sıralıyoruz (APA 7 Mantığı, Türkçe Karakter Uyumlu)
             const sorted = [...filteredMatrixArticles].sort((a, b) => {
                 const nameA = (a.author && a.author.trim() !== '') ? a.author.trim() : (a.title || '');
                 const nameB = (b.author && b.author.trim() !== '') ? b.author.trim() : (b.title || '');
@@ -771,7 +1014,7 @@
                 const surname = author.split(',')[0] || 'Yazar';
                 inText = `(${surname}, ${year})`;
             } 
-            else { // APA 7
+            else {
                 document.getElementById('citationPreviewLabel').innerText = "APA 7 Formatı Önizleme";
                 let volIssuePages = '';
                 if (volume) volIssuePages += `<i>${escapeHtml(volume)}</i>`;
@@ -798,8 +1041,8 @@
             });
         }
 
-        // ATIF ÜRETİCİDEN Doğrudan (K) Olarak APA 7 Kaynakçasına Kaydetme
         async function saveApaToLibrary() {
+            if (!currentUser) return;
             const title = document.getElementById('apaArticleTitle').value.trim() || 'Atıf Kaydı';
             const url = document.getElementById('apaDoi').value.trim() || '';
             const apaText = document.getElementById('apaOutput').innerText;
@@ -820,29 +1063,25 @@
             }
 
             const newArticle = {
-                id: Date.now().toString(),
+                uid: currentUser.uid,
                 url: url,
                 title: title,
                 author: author,
                 year: year,
-                method: journal,     // Dergi Adı
-                criteria: volIssue,  // Cilt (Volume)
+                method: journal,
+                criteria: volIssue,
                 category: 'Genel',
-                status: 'bibliography', 
+                status: 'bibliography',
                 tags: ['APA 7', 'Kaynakça'],
-                notes: apaText,      // Tam APA 7 Künye
+                notes: apaText,
                 pdfData: '',
                 pdfName: '',
                 date: new Date().toISOString()
             };
 
-            await saveArticleToDB(newArticle);
-            articles = await loadArticlesFromDB();
-            renderCategories();
-            renderArticles();
-            renderDashboard();
-            renderMatrixTable();
-            switchMainTab('matrix'); 
+            await saveArticleToCloud(newArticle);
+            await loadArticlesFromCloud();
+            switchMainTab('matrix');
         }
 
         function renderDashboard() {
@@ -978,10 +1217,10 @@
             const filtered = sortedArticles.filter(item => {
                 const matchesCat = activeCategory === 'all' || item.category === activeCategory;
                 const matchesSearch = item.title.toLowerCase().includes(searchVal) || 
-                                      (item.notes && item.notes.toLowerCase().includes(searchVal)) ||
-                                      (item.method && item.method.toLowerCase().includes(searchVal)) ||
-                                      (item.criteria && item.criteria.toLowerCase().includes(searchVal)) ||
-                                      (item.tags && item.tags.some(t => t.toLowerCase().includes(searchVal)));
+                                    (item.notes && item.notes.toLowerCase().includes(searchVal)) ||
+                                    (item.method && item.method.toLowerCase().includes(searchVal)) ||
+                                    (item.criteria && item.criteria.toLowerCase().includes(searchVal)) ||
+                                    (item.tags && item.tags.some(t => t.toLowerCase().includes(searchVal)));
                 return matchesCat && matchesSearch;
             });
 
@@ -1189,6 +1428,7 @@
 
         async function handleFormSubmit(e) {
             e.preventDefault();
+            if (!currentUser) return;
 
             const editId = document.getElementById('editId').value;
             const url = document.getElementById('articleUrl').value.trim();
@@ -1213,28 +1453,25 @@
                 }
             }
 
+            const articleData = {
+                uid: currentUser.uid,
+                url, title, author, year, method, criteria, category, status, tags, notes,
+                pdfData: tempPdfData || '',
+                pdfName: tempPdfName || '',
+                date: new Date().toISOString()
+            };
+
             if (editId) {
-                const index = articles.findIndex(a => a.id === editId);
-                if (index !== -1) {
-                    const existingPdfData = tempPdfData || articles[index].pdfData || '';
-                    const existingPdfName = tempPdfName || articles[index].pdfName || '';
-                    const updatedArticle = { 
-                        ...articles[index], url, title, author, year, method, criteria, category, status, tags, notes, pdfData: existingPdfData, pdfName: existingPdfName 
-                    };
-                    await saveArticleToDB(updatedArticle);
+                articleData.id = editId;
+                const existing = articles.find(a => a.id === editId);
+                if (existing) {
+                    if (!articleData.pdfData) articleData.pdfData = existing.pdfData || '';
+                    if (!articleData.pdfName) articleData.pdfName = existing.pdfName || '';
                 }
-            } else {
-                const newArticle = {
-                    id: Date.now().toString(),
-                    url, title, author, year, method, criteria, category, status, tags, notes,
-                    pdfData: tempPdfData,
-                    pdfName: tempPdfName,
-                    date: new Date().toISOString()
-                };
-                await saveArticleToDB(newArticle);
             }
 
-            articles = await loadArticlesFromDB();
+            await saveArticleToCloud(articleData);
+            articles = await loadArticlesFromCloud();
             renderCategories();
             renderArticles();
             renderDashboard();
@@ -1249,7 +1486,7 @@
             openModal(true);
             document.getElementById('editId').value = item.id;
             document.getElementById('articleUrl').value = item.url || '';
-            document.getElementById('articleTitle').value = item.title;
+            document.getElementById('articleTitle').value = item.title || '';
             document.getElementById('articleAuthor').value = item.author || '';
             document.getElementById('articleYear').value = item.year || '2026';
             document.getElementById('articleMethod').value = item.method || '';
@@ -1272,12 +1509,8 @@
 
         async function deleteArticle(id) {
             if (confirm('Bu makaleyi kütüphaneden silmek istediğinize emin misiniz?')) {
-                await deleteArticleFromDB(id);
-                articles = await loadArticlesFromDB();
-                renderCategories();
-                renderArticles();
-                renderDashboard();
-                renderMatrixTable();
+                await deleteArticleFromCloud(id);
+                await loadArticlesFromCloud();
             }
         }
 
@@ -1353,24 +1586,20 @@
 
                             if (title && title !== 'Makale Başlığı') {
                                 const newArticle = {
-                                    id: (Date.now() + i).toString(),
+                                    uid: currentUser.uid,
                                     url: url.includes('http') ? url : '',
                                     title, author, year, method, criteria, category, status, tags, notes,
                                     pdfData: '', pdfName: '',
                                     date: new Date().toISOString()
                                 };
-                                await saveArticleToDB(newArticle);
+                                await saveArticleToCloud(newArticle);
                                 addedCount++;
                             }
                         }
                     }
 
-                    articles = await loadArticlesFromDB();
-                    renderCategories();
-                    renderArticles();
-                    renderDashboard();
-                    renderMatrixTable();
-                    alert(`Başarıyla ${addedCount} makale kütüphanenize yüklendi!`);
+                    await loadArticlesFromCloud();
+                    alert(`Başarıyla ${addedCount} makale bulut kütüphanenize yüklendi!`);
                     event.target.value = '';
                 } catch (err) {
                     console.error("CSV hatası:", err);
