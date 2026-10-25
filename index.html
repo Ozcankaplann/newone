@@ -41,7 +41,7 @@
     </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Akademiks</title>
+    <title>Akademiks - AI Destekli Tez & Makale Asistanı</title>
     
     <link rel="icon" type="image/png" href="logo.png">
     <script src="https://cdn.tailwindcss.com"></script>
@@ -64,7 +64,7 @@
 </head>
 <body class="bg-[#EEF1F6] text-textPrimary font-sans antialiased min-h-screen py-6 sm:py-10 px-3 sm:px-6 flex items-center justify-center selection:bg-blue-100">
 
-    <!-- AKADEMİKS PRO - KARŞILAMA VE ABONELİK POPUP AFİŞİ (Sadece X'e basınca kapanır) -->
+    <!-- AKADEMİKS PRO - KARŞILAMA VE ABONELİK POPUP AFİŞİ -->
     <div id="promoPopup" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
         <div class="bg-white rounded-3xl max-w-lg w-full p-8 shadow-2xl border border-gray-100 text-center relative overflow-hidden transform transition-all">
             
@@ -79,28 +79,28 @@
             </div>
 
             <span class="bg-blue-50 text-blue-700 font-semibold text-[11px] px-3 py-1 rounded-full uppercase tracking-wider mb-3 inline-block">
-                Akademik Kariyerini Kolaylaştır
+                Yapay Zeka Destekli Akademik Asistan
             </span>
             <h2 class="text-xl font-extrabold text-gray-900 mb-2 tracking-tight">
-                Tez ve Makale Yönetiminde <span class="text-blue-600">Yeni Nesil Asistan</span>
+                Tez ve Makale Yönetiminde <span class="text-blue-600">Yeni Nesil Güç</span>
             </h2>
             
             <p class="text-xs text-gray-600 leading-relaxed mb-6 px-2">
-                Yüzlerce makaleyi tek tıkla arşivle, <b>APA 7 A-Z Otomatik Kaynakça Matrisi</b> oluştur, verilerini bulutta güvenle sakla ve zamandan kazan.
+                Makaleleri tek tıkla <b>Google Gemini AI ile analiz et</b>, APA 7 A-Z Otomatik Kaynakça Matrisi oluştur ve zamandan kazan.
             </p>
 
             <div class="bg-gray-50 rounded-2xl p-4 mb-6 text-left space-y-2.5 border border-gray-100">
                 <div class="flex items-center gap-2.5 text-xs text-gray-700 font-medium">
                     <i class="fa-solid fa-circle-check text-emerald-500"></i>
-                    <span>Sınırsız Makale & PDF Arşivleme</span>
+                    <span>Tek Tuşla AI Makale Özeti ve Tez Katkı Analizi</span>
                 </div>
                 <div class="flex items-center gap-2.5 text-xs text-gray-700 font-medium">
                     <i class="fa-solid fa-circle-check text-emerald-500"></i>
-                    <span>Tek Tuşla Word Uyumlu A-Z Kaynakça Tablosu</span>
+                    <span>Sınırsız Makale & PDF Bulut Arşivleme</span>
                 </div>
                 <div class="flex items-center gap-2.5 text-xs text-gray-700 font-medium">
                     <i class="fa-solid fa-circle-check text-emerald-500"></i>
-                    <span>Çoklu Format Atıf Üretici (APA 7, IEEE, Harvard)</span>
+                    <span>Word Uyumlu A-Z Alfabetik Kaynakça Tablosu</span>
                 </div>
             </div>
 
@@ -115,7 +115,7 @@
             </div>
 
             <div class="space-y-2.5">
-                <a href="https://www.shopier.com/akademiks/52227364" target="_blank" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-xl text-xs font-bold transition shadow-lg hover:shadow-xl flex items-center justify-center gap-2 cursor-pointer">
+                <a href="BURAYA_SHOPIER_ODEME_LINKIN_GELECEK" target="_blank" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-xl text-xs font-bold transition shadow-lg hover:shadow-xl flex items-center justify-center gap-2 cursor-pointer">
                     <i class="fa-solid fa-bolt"></i>
                     <span>Hemen Pro Üye Ol (90 TL)</span>
                 </a>
@@ -167,7 +167,7 @@
         </div>
     </div>
 
-    <!-- ÖDEME ONAY BEKLEME EKRANI (Ödeme yapmamış/onaylanmamış kullanıcılar için) -->
+    <!-- ÖDEME ONAY BEKLEME EKRANI -->
     <div id="paywallModal" class="fixed inset-0 bg-black/70 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
         <div class="bg-white rounded-3xl max-w-md w-full p-8 shadow-2xl border border-gray-100 text-center relative">
             <div class="w-16 h-16 bg-amber-50 text-amber-600 rounded-2xl flex items-center justify-center mx-auto mb-4 text-2xl shadow-inner border border-amber-100">
@@ -179,7 +179,7 @@
             </p>
 
             <div class="space-y-2.5">
-                <a href="https://www.shopier.com/akademiks/52227364" target="_blank" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-xl text-xs font-bold transition shadow-md flex items-center justify-center gap-2 cursor-pointer">
+                <a href="BURAYA_SHOPIER_ODEME_LINKIN_GELECEK" target="_blank" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-xl text-xs font-bold transition shadow-md flex items-center justify-center gap-2 cursor-pointer">
                     <i class="fa-solid fa-bolt"></i>
                     <span>Hemen Pro Üye Ol (90 TL)</span>
                 </a>
@@ -194,16 +194,18 @@
     <div class="max-w-6xl w-full bg-white rounded-3xl border border-gray-200/90 shadow-xl overflow-hidden flex flex-col min-h-[85vh] my-auto relative">
 
         <header class="bg-white/90 backdrop-blur-md border-b border-gray-100 px-6 sm:px-8 py-4 flex flex-col md:flex-row md:items-center justify-between gap-4 sticky top-0 z-30">
+            <!-- Çerçevesiz, büyütülmüş logo -->
             <div class="flex items-center space-x-3.5">
-<div class="h-16 shrink-0 flex items-center">
-    <img src="logo.png" alt="Logo" class="h-full object-contain block">
+                <div class="h-11 shrink-0 flex items-center">
+                    <img src="logo.png" alt="Logo" class="h-full object-contain block">
                 </div>
                 <div>
                     <h1 class="font-bold text-base sm:text-lg text-gray-800 tracking-tight">Akademiks</h1>
-                    <p class="text-[11px] text-textSecondary font-medium">Makale Arşivi, Literatür Matrisi & Atıf Üretici</p>
+                    <p class="text-[11px] text-textSecondary font-medium">AI Destekli Arşiv, Literatür & Atıf Asistanı</p>
                 </div>
             </div>
 
+            <!-- Menü Sekmeleri -->
             <div class="flex items-center gap-1.5 bg-gray-100/80 p-1 rounded-2xl border border-gray-200/60 flex-wrap self-start md:self-auto">
                 <button type="button" id="tabLibraryBtn" onclick="switchMainTab('library')" class="px-3 py-1.5 rounded-xl text-xs font-semibold transition flex items-center gap-1.5 bg-white text-gray-800 shadow-xs">
                     <i class="fa-solid fa-layer-group text-blue-600"></i>
@@ -233,6 +235,7 @@
 
         <main class="flex-grow p-6 sm:p-8 flex flex-col justify-between pb-24">
 
+            <!-- KÜTÜPHANE SEKMESİ -->
             <div id="sectionLibrary">
                 <div class="flex flex-col md:flex-row gap-4 mb-6 justify-between items-stretch md:items-center">
                     <div class="relative flex-grow max-w-md">
@@ -276,6 +279,7 @@
                 </div>
             </div>
 
+            <!-- KAYNAKÇA LİSTESİ SEKMESİ -->
             <div id="sectionMatrix" class="hidden space-y-4">
                 <div class="bg-indigo-50/60 border border-indigo-100 rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                     <div>
@@ -307,6 +311,7 @@
                 </div>
             </div>
 
+            <!-- DASHBOARD SEKMESİ -->
             <div id="sectionDashboard" class="hidden space-y-6">
                 <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
                     <div class="bg-pastelBlue/40 border border-blue-100 p-4 rounded-2xl flex items-center gap-3.5">
@@ -390,6 +395,7 @@
                 </div>
             </div>
 
+            <!-- ATIF ÜRETİCİ SEKMESİ -->
             <div id="sectionApa" class="hidden max-w-4xl mx-auto w-full">
                 <div class="bg-pastelPurple/30 rounded-2xl p-5 border border-purple-100/80 mb-6 flex items-center justify-between flex-wrap gap-3">
                     <div>
@@ -498,14 +504,14 @@
 
             <footer class="mt-8 pt-4 border-t border-gray-100 flex items-center justify-between text-[11px] text-gray-400">
                 <div class="flex items-center gap-2">
-                    <span></span>
+                    <span>Akademiks - AI Destekli Bulut Platformu</span>
                 </div>
                 <span id="cloudStatusText" class="text-blue-600 font-semibold">Bağlanıyor...</span>
             </footer>
 
         </main>
 
-        <!-- SOL ALT KÖŞE: GİRİŞ YAP / KULLANICI ADI & ÇIKIŞ YAP ÇERÇEVESİ -->
+        <!-- SOL ALT KÖŞE: GİRİŞ YAP / KULLANICI ADI & ÇIKIŞ YAP -->
         <div class="absolute bottom-5 left-6 z-20 flex items-center gap-2 bg-white/90 backdrop-blur-md px-3.5 py-2 rounded-2xl border border-gray-200 shadow-md">
             <button type="button" id="btnLoginFrameBtn" onclick="openLoginModal()" class="bg-blue-600 hover:bg-blue-700 text-white px-3.5 py-1.5 rounded-xl text-xs font-semibold transition shadow-xs flex items-center gap-1.5 cursor-pointer">
                 <i class="fa-solid fa-right-to-bracket text-xs"></i>
@@ -535,6 +541,34 @@
         </div>
     </div>
 
+    <!-- YAPAY ZEKA ANALİZ SONUÇ MODALI -->
+    <div id="aiModal" class="fixed inset-0 bg-black/50 backdrop-blur-xs z-50 flex items-center justify-center hidden p-4">
+        <div class="bg-white rounded-3xl max-w-2xl w-full p-6 shadow-2xl border border-gray-100 flex flex-col max-h-[85vh]">
+            <div class="flex justify-between items-center mb-4 pb-3 border-b border-gray-100">
+                <div class="flex items-center gap-2">
+                    <div class="w-8 h-8 rounded-xl bg-purple-100 text-purple-600 flex items-center justify-center text-sm">
+                        <i class="fa-solid fa-wand-magic-sparkles"></i>
+                    </div>
+                    <h2 class="text-sm font-bold text-gray-800">Google Gemini AI Akademik Analiz Raporu</h2>
+                </div>
+                <button type="button" onclick="closeAiModal()" class="text-gray-400 hover:text-gray-600 p-1.5 rounded-lg hover:bg-gray-100 transition cursor-pointer">
+                    <i class="fa-solid fa-xmark text-sm"></i>
+                </button>
+            </div>
+            
+            <div id="aiModalContent" class="overflow-y-auto flex-grow text-xs text-gray-700 space-y-4 pr-1 leading-relaxed">
+                <!-- AI Yükleniyor veya Sonuç Alanı -->
+            </div>
+
+            <div class="pt-4 border-t border-gray-100 flex justify-end">
+                <button type="button" onclick="closeAiModal()" class="px-5 py-2 text-xs font-medium bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl transition cursor-pointer">
+                    Kapat
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAKALE EKLEME MODALI -->
     <div id="articleModal" class="fixed inset-0 bg-black/40 backdrop-blur-xs z-50 flex items-center justify-center hidden p-4">
         <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-gray-100 transition-all transform scale-100 max-h-[90vh] overflow-y-auto" id="modalCard">
             
@@ -689,7 +723,6 @@
                                 return;
                             }
 
-                            // Firestore'dan kullanıcının Pro abonelik durumunu kontrol et
                             const userDocRef = window.doc(window.firebaseDb, "users", user.uid);
                             const userDoc = await window.getDoc(userDocRef);
                             
@@ -698,7 +731,6 @@
                                 isPro = true;
                             }
 
-                            // ÖDEME ONAYLANMAMIŞSA: Kütüphaneye sokma, ödeme bekliyor ekranını göster
                             if (!isPro) {
                                 currentUser = null;
                                 document.getElementById('promoPopup').classList.add('hidden');
@@ -711,7 +743,6 @@
                                 return;
                             }
 
-                            // ÖDEME ONAYLANMIŞ KULLANICI İSE GİRİŞE İZİN VER
                             currentUser = user;
                             document.getElementById('authModal').classList.add('hidden');
                             document.getElementById('promoPopup').classList.add('hidden');
@@ -769,7 +800,6 @@
                     const userCredential = await window.createUserWithEmailAndPassword(window.firebaseAuth, email, pass);
                     await window.sendEmailVerification(userCredential.user);
                     
-                    // Yeni kayıt olan kullanıcıya otomatik isPro: false kaydı açıyoruz
                     await window.setDoc(window.doc(window.firebaseDb, "users", userCredential.user.uid), {
                         email: email,
                         isPro: false,
@@ -831,6 +861,74 @@
         async function deleteArticleFromCloud(id) {
             if (!currentUser) return;
             await window.deleteDoc(window.doc(window.firebaseDb, "articles", id));
+        }
+
+        // GEMINI AI ENTEGRASYONLU ÖZETLEME FONKSİYONU
+        async function summarizeWithAI(id) {
+            const item = articles.find(a => a.id === id);
+            if (!item) return;
+
+            const aiModal = document.getElementById('aiModal');
+            const contentDiv = document.getElementById('aiModalContent');
+            
+            aiModal.classList.remove('hidden');
+            contentDiv.innerHTML = `
+                <div class="text-center py-10 space-y-3">
+                    <div class="inline-block w-8 h-8 border-4 border-purple-500 border-t-transparent rounded-full animate-spin"></div>
+                    <p class="text-xs font-semibold text-purple-700">Google Gemini AI makaleyi inceliyor ve akademik sentez raporu hazırlıyor...</p>
+                </div>
+            `;
+
+            // Gemini API Anahtarın (Buraya kendi Gemini API key'ini yazabilirsin)
+            const apiKey = "AIzaSyBbhK4DsRHiHHUktUK7ShBd0pY7HGs76U8"; 
+            const prompt = `Sen kıdemli bir akademik tez danışmanısın. Aşağıda bilgileri verilen makaleyi akademik olarak analiz et.
+            
+            Makale Başlığı: ${item.title}
+            Yazar: ${item.author || 'Belirtilmedi'}
+            Yıl: ${item.year || '2026'}
+            Dergi / Yöntem: ${item.method || 'Belirtilmedi'}
+            Notlar / Özeti: ${item.notes || 'Not girilmemiş'}
+            
+            Lütfen raporu şu 3 başlık altında Markdown formatında profesyonel ve net bir dille Türkçe olarak hazırla:
+            1. **Akademik Özet & Temel Bulgular** (Makalenin amacı, kullanılan yöntem ve ana sonuçlar)
+            2. **Tez Çalışmasına Katkı & Entegrasyon Önerisi** (Bu makale araştırmacının literatür taramasına ve risk analizine nasıl katkı sağlar?)
+            3. **Kritik Değerlendirme & Yöntem Analizi** (Makalenin güçlü yanları ve dikkat edilmesi gereken noktalar)`;
+
+            try {
+                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        contents: [{ parts: [{ text: prompt }] }]
+                    })
+                });
+
+                const data = await response.json();
+                if (data.candidates && data.candidates[0].content.parts[0].text) {
+                    let aiText = data.candidates[0].content.parts[0].text;
+                    // Basit Markdown dönüşümleri
+                    aiText = aiText.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>').replace(/\n/g, '<br>');
+                    contentDiv.innerHTML = `
+                        <div class="bg-purple-50/50 p-4 rounded-2xl border border-purple-100 space-y-3">
+                            <div class="text-[11px] font-bold text-purple-900 border-b border-purple-200/60 pb-2">
+                                📌 ${escapeHtml(item.title)}
+                            </div>
+                            <div class="text-xs text-gray-800 leading-relaxed space-y-2">
+                                ${aiText}
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    contentDiv.innerHTML = `<p class="text-red-500 text-center py-4">AI yanıt üretirken bir hata oluştu. Lütfen tekrar deneyin.</p>`;
+                }
+            } catch (err) {
+                console.error("Gemini API Hatası:", err);
+                contentDiv.innerHTML = `<p class="text-red-500 text-center py-4">Bağlantı hatası oluştu. İnternet bağlantınızı veya API anahtarınızı kontrol edin.</p>`;
+            }
+        }
+
+        function closeAiModal() {
+            document.getElementById('aiModal').classList.add('hidden');
         }
 
         function handlePdfFileUpload(event) {
@@ -1319,6 +1417,10 @@
                         <div class="flex items-center justify-between pt-2 border-t border-gray-200/60 text-[10px] text-gray-400">
                             <span>${item.author ? escapeHtml(item.author) : new Date(item.date).toLocaleDateString('tr-TR')}</span>
                             <div class="flex items-center space-x-1">
+                                <button type="button" onclick="summarizeWithAI('${item.id}')" class="px-2 py-0.5 text-purple-600 bg-purple-50 hover:bg-purple-100 border border-purple-200/60 rounded-md transition text-[10px] flex items-center gap-1 font-medium cursor-pointer" title="Yapay Zeka ile Özetle">
+                                    <i class="fa-solid fa-wand-magic-sparkles text-purple-500"></i>
+                                    <span>AI Özet</span>
+                                </button>
                                 ${item.pdfData ? `
                                     <button type="button" onclick="openPdf('${item.id}')" class="px-2 py-0.5 text-red-600 bg-red-50 hover:bg-red-100 border border-red-200/60 rounded-md transition text-[10px] flex items-center gap-1 font-medium cursor-pointer" title="PDF Oku">
                                         <i class="fa-solid fa-file-pdf text-red-500"></i>
@@ -1368,6 +1470,10 @@
                     </div>
 
                     <div class="flex items-center justify-between sm:justify-end w-full sm:w-auto gap-2.5 shrink-0 pt-2 sm:pt-0 border-t sm:border-t-0 border-gray-100">
+                        <button type="button" onclick="summarizeWithAI('${item.id}')" class="px-2 py-0.5 text-purple-600 bg-purple-50 hover:bg-purple-100 border border-purple-200/60 rounded-md transition text-[9px] flex items-center gap-1 font-medium cursor-pointer">
+                            <i class="fa-solid fa-wand-magic-sparkles"></i>
+                            <span>AI Özet</span>
+                        </button>
                         ${item.pdfData ? `
                             <button type="button" onclick="openPdf('${item.id}')" class="px-2 py-0.5 text-red-600 bg-red-50 hover:bg-red-100 border border-red-200/60 rounded-md transition text-[9px] flex items-center gap-1 font-medium cursor-pointer">
                                 <i class="fa-solid fa-file-pdf"></i>
